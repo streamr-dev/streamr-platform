@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useContext, Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import styled from 'styled-components'
 
@@ -11,10 +12,11 @@ import Popover from '$shared/components/Popover'
 import useCopy from '$shared/hooks/useCopy'
 import Notification from '$shared/utils/Notification'
 import { NotificationIcon } from '$shared/utils/constants'
-import useEthereumIdentities from '$shared/modules/integrationKey/hooks/useEthereumIdentities'
 import { truncate } from '$shared/utils/text'
 import useAccountAddress from '$shared/hooks/useAccountAddress'
 import Label from '$ui/Label'
+import { selectUserData } from '$shared/modules/user/selectors'
+import { isEthereumAddress } from '$mp/utils/validate'
 import useValidation from '../ProductController/useValidation'
 import { Context as EditControllerContext } from './EditControllerProvider'
 
@@ -72,11 +74,7 @@ const BeneficiaryAddress = ({
 
     const { copy } = useCopy()
 
-    const { ethereumIdentities } = useEthereumIdentities()
-
-    const integrationKeysFiltered = useMemo(() => (
-        ethereumIdentities.filter(({ json }) => json && json.address)
-    ), [ethereumIdentities])
+    const { username } = useSelector(selectUserData) || {}
 
     const onCopy = useCallback(() => {
         if (!addressProp) {
@@ -150,14 +148,14 @@ const BeneficiaryAddress = ({
                         >
                             <AddressItem name="wallet address" address={accountAddress || 'Wallet locked'} />
                         </Popover.Item>,
-                        ...integrationKeysFiltered.map(({ id, name, json }) => (
+                        ...(!!username && isEthereumAddress(username) ? [
                             <Popover.Item
-                                key={id}
-                                onClick={() => onChange(json.address)}
+                                key="username"
+                                onClick={() => onChange(username)}
                             >
-                                <AddressItem name={name} address={json.address} />
-                            </Popover.Item>
-                        )),
+                                <AddressItem name="username" address={username} />
+                            </Popover.Item>,
+                        ] : []),
                         <Popover.Item
                             key="copy"
                             disabled={!addressProp}

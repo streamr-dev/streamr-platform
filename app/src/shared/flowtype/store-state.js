@@ -11,7 +11,6 @@ import type { StoreState as MarketplaceStoreState } from '$mp/flowtype/store-sta
 import type { StoreState as UserPagesStoreState } from '$userpages/flowtype/states/store-state'
 import type { User, Balances } from '$shared/flowtype/user-types'
 import type { ErrorInUi } from '$shared/flowtype/common-types'
-import type { IntegrationKeyEntities, IntegrationKeyIdList } from '$shared/flowtype/integration-key-types'
 
 // entities
 export type EntitiesState = {
@@ -24,7 +23,6 @@ export type EntitiesState = {
     relatedProducts?: ProductEntities,
     streams?: StreamEntities,
     transactions?: TransactionEntities,
-    integrationKeys?: IntegrationKeyEntities,
 }
 
 // user
@@ -37,19 +35,7 @@ export type UserState = {
     deleteUserAccountError: ?ErrorInUi,
 }
 
-// integration key
-export type IntegrationKeyState = {
-    ethereumIdentities: IntegrationKeyIdList,
-    fetchingIntegrationKeys: boolean,
-    integrationKeysError: ?ErrorInUi,
-    creatingIdentity: boolean,
-    creatingIdentityError: ?ErrorInUi,
-    removingIntegrationKey: boolean,
-    removingIntegrationError: ?ErrorInUi,
-}
-
 export type StoreState = MarketplaceStoreState & UserPagesStoreState & {
     entities: EntitiesState,
     user: UserState,
-    integrationKey: IntegrationKeyState,
 }

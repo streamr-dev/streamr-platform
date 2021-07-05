@@ -6,8 +6,6 @@ export const ErrorCodes = {
     WALLET_LOCKED: 'WEB3/WALLET_LOCKED',
     WRONG_NETWORK_SELECTED: 'WEB3/WRONG_NETWORK_SELECTED',
     CHALLENGE_FAILED: 'WEB3/CHALLENGE_FAILED',
-    CREATE_IDENTITY_FAILED: 'WEB3/CREATE_IDENTITY_FAILED',
-    IDENTITY_EXISTS: 'WEB3/IDENTITY_EXISTS',
 }
 
 export class Web3NotSupportedError extends Error {
@@ -94,44 +92,10 @@ export class ChallengeFailedError extends Error {
     }
 }
 
-export class CreateIdentityFailedError extends Error {
-    code: string
-
-    constructor(message: string = 'Create identity failed', ...args: any[]) {
-        super(message, ...args)
-
-        this.code = ErrorCodes.CREATE_IDENTITY_FAILED
-
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, CreateIdentityFailedError)
-        }
-
-        Object.setPrototypeOf(this, CreateIdentityFailedError.prototype)
-    }
-}
-
-export class IdentityExistsError extends Error {
-    code: string
-
-    constructor(message: string = 'Identity exists', ...args: any[]) {
-        super(message, ...args)
-
-        this.code = ErrorCodes.IDENTITY_EXISTS
-
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, IdentityExistsError)
-        }
-
-        Object.setPrototypeOf(this, IdentityExistsError.prototype)
-    }
-}
-
 export default {
     Web3NotSupportedError,
     Web3NotEnabledError,
     WalletLockedError,
     WrongNetworkSelectedError,
     ChallengeFailedError,
-    CreateIdentityFailedError,
-    IdentityExistsError,
 }

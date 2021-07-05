@@ -122,7 +122,7 @@ export const getValidId = (id: string, prefix: boolean = true): string => {
 const urlValidator = yup.string().trim().url()
 const emailValidator = yup.string().trim().email()
 
-export const validate = (product: Product, isEthIdentityRequired: boolean = false): Object => {
+export const validate = (product: Product): Object => {
     const invalidFields = {};
 
     ['name', 'description', 'category'].forEach((field) => {
@@ -139,8 +139,6 @@ export const validate = (product: Product, isEthIdentityRequired: boolean = fals
     if (isDataUnionProduct(product)) {
         invalidFields.adminFee = (product.adminFee === undefined || +product.adminFee < 0 || +product.adminFee > 1)
         invalidFields.beneficiaryAddress = false
-
-        invalidFields.ethIdentity = isEthIdentityRequired
     } else {
         invalidFields.beneficiaryAddress = (isPaid && (!product.beneficiaryAddress || !isEthereumAddress(product.beneficiaryAddress)))
         invalidFields.adminFee = false

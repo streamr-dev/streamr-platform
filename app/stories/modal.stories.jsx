@@ -36,7 +36,6 @@ import PurchaseTransactionProgress from '$mp/components/Modal/PurchaseTransactio
 import PurchaseComplete from '$mp/components/Modal/PurchaseComplete'
 import PurchaseError from '$mp/components/Modal/PurchaseError'
 import ReadyToPublishDialog from '$mp/components/Modal/ReadyToPublishDialog'
-import ConnectEthereumAddressDialog from '$mp/components/Modal/ConnectEthereumAddressDialog'
 import ErrorDialog from '$mp/components/Modal/ErrorDialog'
 import CropImageModal from '$mp/components/Modal/CropImageModal'
 import AddWhitelistedAddressDialog from '$mp/components/Modal/AddWhitelistedAddressDialog'
@@ -695,31 +694,6 @@ story('Marketplace/PurchaseTransactionProgress')
             />
         )
     })
-
-story('Marketplace/ConnectEthereumAddressDialog')
-    .add('default', () => (
-        <ConnectEthereumAddressDialog
-            onCancel={action('close')}
-            onSet={action('onSet')}
-        />
-    ))
-    .add('default (iPhone)', () => (
-        <ConnectEthereumAddressDialog
-            onCancel={action('close')}
-            onSet={action('onSet')}
-        />
-    ), {
-        viewport: {
-            defaultViewport: 'iPhone',
-        },
-    })
-    .add('waiting', () => (
-        <ConnectEthereumAddressDialog
-            onCancel={action('close')}
-            onSet={action('onSet')}
-            waiting
-        />
-    ))
 
 story('Marketplace/PurchaseComplete')
     .add('default', () => (

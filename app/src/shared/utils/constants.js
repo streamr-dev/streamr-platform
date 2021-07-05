@@ -85,11 +85,6 @@ export const dialogAutoCloseTimeout = 2000 // in milliseconds
 
 export const maxFileSizeForImageUpload = 5242880
 
-export const integrationKeyServices = {
-    PRIVATE_KEY: 'ETHEREUM',
-    ETHEREREUM_IDENTITY: 'ETHEREUM_ID',
-}
-
 export const NotificationIcon = {
     CHECKMARK: 'checkmark',
     ERROR: 'error',

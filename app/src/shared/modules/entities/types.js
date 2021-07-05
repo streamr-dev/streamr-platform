@@ -12,7 +12,6 @@ export type UpdateEntitiesParam = {
         categories?: {},
         streams?: {},
         transactions?: {},
-        integrationKeys?: {},
         joinRequests: {},
         whitelistedAddresses: {},
     }

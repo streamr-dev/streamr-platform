@@ -25,9 +25,6 @@ export const subscriptionsSchema = [subscriptionSchema]
 export const transactionSchema = new schema.Entity('transactions')
 export const transactionsSchema = [transactionSchema]
 
-export const integrationKeySchema = new schema.Entity('integrationKeys')
-export const integrationKeysSchema = [integrationKeySchema]
-
 export const dataUnionSchema = new schema.Entity('dataUnions')
 export const dataUnionsSchema = [dataUnionSchema]
 

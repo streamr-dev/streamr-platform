@@ -5,11 +5,12 @@ import type { ErrorInUi } from '$shared/flowtype/common-types'
 import { handleEntities } from '$shared/utils/entities'
 import { transactionsSchema, contractProductSchema } from '$shared/modules/entities/schema'
 import type { StoreState } from '$shared/flowtype/store-state'
-import { selectEthereumIdentities } from '$shared/modules/integrationKey/selectors'
+import { selectUserData } from '$shared/modules/user/selectors'
 import { selectEntities } from '$shared/modules/entities/selectors'
 import type { ProductIdList } from '$mp/flowtype/product-types'
 import { getProductFromContract } from '$mp/modules/contractProduct/services'
 import { selectMyProductList } from '$mp/modules/myProductList/selectors'
+import { isEthereumAddress } from '$mp/utils/validate'
 import { getValidId } from '$mp/utils/product'
 import { selectTransactionEvents, selectOffset } from './selectors'
 import * as services from './services'
@@ -106,21 +107,20 @@ export const showEvents = () => (dispatch: Function, getState: () => StoreState)
 
 export const getTransactionEvents = () => (dispatch: Function, getState: () => StoreState) => {
     const state = getState()
-    const web3Accounts = selectEthereumIdentities(state)
+    const { username } = selectUserData(state) || {}
 
-    if (!web3Accounts || !web3Accounts.length) {
+    if (!username || !isEthereumAddress(username)) {
         return dispatch(getTransactionsSuccess([]))
     }
 
-    const addresses = (web3Accounts || []).map(({ json: { address } }) => (address || '').toLowerCase())
-    const addressSet = new Set(addresses)
+    const address = username.toLowerCase()
     const products = selectMyProductList(state)
     const ownedProductIds: ProductIdList = (products || [])
-        .filter(({ ownerAddress }) => addressSet.has((ownerAddress || '').toLowerCase()))
+        .filter(({ ownerAddress }) => (ownerAddress || '').toLowerCase() === address)
         .map(({ id }) => getValidId(id || ''))
     dispatch(getTransactionEventsRequest())
 
-    return services.getTransactionEvents(addresses, ownedProductIds)
+    return services.getTransactionEvents([address], ownedProductIds)
         .then((result) => {
             dispatch(getTransactionEventsSuccess(result))
             dispatch(showEvents())

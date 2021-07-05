@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import BN from 'bignumber.js'
 import { titleize } from '@streamr/streamr-layout'
@@ -23,9 +23,7 @@ import LoadMore from '$mp/components/LoadMore'
 import DocsShortcuts from '$userpages/components/DocsShortcuts'
 import ListContainer from '$shared/components/Container/List'
 import { ago } from '$shared/utils/time'
-import useAccountAddress from '$shared/hooks/useAccountAddress'
 import useCopy from '$shared/hooks/useCopy'
-import useEthereumIdentities from '$shared/modules/integrationKey/hooks/useEthereumIdentities'
 import { truncate } from '$shared/utils/text'
 import Notification from '$shared/utils/Notification'
 import { formatDecimals } from '$mp/utils/price'
@@ -87,9 +85,7 @@ const eventTypes = {
 const TransactionList = () => {
     const dispatch = useDispatch()
 
-    const accountId = useAccountAddress()
     const { copy } = useCopy()
-    const { load: loadEthIdentities, isLinked, ethereumIdentities } = useEthereumIdentities()
 
     const copyToClipboard = useCallback((text) => {
         copy(text)
@@ -125,16 +121,13 @@ const TransactionList = () => {
         clearTransactionList()
 
         Promise.all([
-            loadEthIdentities(),
             loadProducts(),
         ])
             .then(getTransactionEvents)
-    }, [clearTransactionList, loadEthIdentities, loadProducts, getTransactionEvents])
-
-    const accountsExist = useMemo(() => !!(ethereumIdentities && ethereumIdentities.length), [ethereumIdentities])
-    const accountLinked = useMemo(() => !!(accountId && isLinked(accountId)), [isLinked, accountId])
+    }, [clearTransactionList, loadProducts, getTransactionEvents])
 
     const isLoading = !!(fetchingTransactions || fetchingProducts)
+
     return (
         <Layout
             loading={isLoading}
@@ -145,10 +138,7 @@ const TransactionList = () => {
             <CoreHelmet title="Transactions" />
             <StyledListContainer>
                 {!isLoading && transactions && transactions.length <= 0 && (
-                    <NoTransactionsView
-                        accountsExist={accountsExist}
-                        accountLinked={accountLinked}
-                    />
+                    <NoTransactionsView />
                 )}
                 {transactions && transactions.length > 0 && (
                     <TransactionListComponent>

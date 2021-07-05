@@ -415,7 +415,6 @@ describe('product utils', () => {
                 pricePerSecond: false,
                 beneficiaryAddress: false,
                 adminFee: true,
-                ethIdentity: false,
                 termsOfUse: false,
                 'contact.email': false,
             })
@@ -434,7 +433,6 @@ describe('product utils', () => {
                 pricePerSecond: false,
                 beneficiaryAddress: false,
                 adminFee: true,
-                ethIdentity: true,
                 termsOfUse: false,
                 'contact.email': false,
             })
@@ -471,7 +469,6 @@ describe('product utils', () => {
                 pricePerSecond: true,
                 beneficiaryAddress: false,
                 adminFee: true,
-                ethIdentity: false,
                 termsOfUse: false,
                 'contact.email': false,
             })
@@ -561,7 +558,6 @@ describe('product utils', () => {
                 pricePerSecond: false,
                 beneficiaryAddress: false,
                 adminFee: false,
-                ethIdentity: false,
                 termsOfUse: false,
                 'contact.email': false,
             })
@@ -577,7 +573,6 @@ describe('product utils', () => {
                 pricePerSecond: false,
                 beneficiaryAddress: false,
                 adminFee: false,
-                ethIdentity: false,
                 termsOfUse: false,
                 'contact.email': false,
             })
@@ -593,7 +588,6 @@ describe('product utils', () => {
                 pricePerSecond: false,
                 beneficiaryAddress: false,
                 adminFee: true,
-                ethIdentity: false,
                 termsOfUse: false,
                 'contact.email': false,
             })

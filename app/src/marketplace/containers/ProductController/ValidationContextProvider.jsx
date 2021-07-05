@@ -5,11 +5,9 @@ import get from 'lodash/get'
 import set from 'lodash/fp/set'
 import isPlainObject from 'lodash/isPlainObject'
 import useIsMounted from '$shared/hooks/useIsMounted'
-import useDataUnion from '$mp/containers/ProductController/useDataUnion'
 
-import { validate as validateProduct, isDataUnionProduct } from '$mp/utils/product'
+import { validate as validateProduct } from '$mp/utils/product'
 import { isPublished, getPendingChanges, PENDING_CHANGE_FIELDS } from '../EditProductPage/state'
-import useIsEthIdentityNeeded from '../EditProductPage/useIsEthIdentityNeeded'
 import useProduct from '../ProductController/useProduct'
 
 export const INFO = 'info'
@@ -46,7 +44,6 @@ const validationErrors = {
     streams: 'No streams selected',
     termsOfUse: 'Invalid URL for detailed terms',
     adminFee: 'Admin fee cannot be empty',
-    ethIdentity: 'Please connect an Ethereum address',
     beneficiaryAddress: 'A valid ethereum address is needed',
     pricePerSecond: 'Price should be greater or equal to 0',
     'contact.url': 'Invalid URL',
@@ -62,11 +59,6 @@ function useValidationContext(): ContextProps {
     const [pendingChanges, setPendingChanges] = useState({})
     const [touched, setTouchedState] = useState({})
     const originalProduct = useProduct()
-    const dataUnion = useDataUnion()
-    const { owner } = dataUnion || {}
-    const { isRequired } = useIsEthIdentityNeeded(owner)
-    const isDataUnion = isDataUnionProduct(originalProduct)
-    const isEthIdentityRequired = !!(isDataUnion && isRequired)
 
     const setTouched = useCallback((name: string, value = true) => {
         setTouchedState((existing) => ({
@@ -140,7 +132,7 @@ function useValidationContext(): ContextProps {
     const validate = useCallback((product) => {
         if (!isMounted() || !product) { return }
 
-        const invalidFields = validateProduct(product, isEthIdentityRequired)
+        const invalidFields = validateProduct(product)
 
         Object.keys(validationErrors).forEach((field) => {
             if (invalidFields[field]) {
@@ -160,7 +152,7 @@ function useValidationContext(): ContextProps {
                 get(changes, field) != null || (isPublic && isTouched(field) && !isEqual(get(product, field), get(originalProduct, field))),
             )
         })
-    }, [setStatus, clearStatus, isMounted, setPendingChange, isTouched, originalProduct, isEthIdentityRequired])
+    }, [setStatus, clearStatus, isMounted, setPendingChange, isTouched, originalProduct])
 
     return useMemo(() => ({
         setStatus,

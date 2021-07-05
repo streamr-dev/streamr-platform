@@ -24,9 +24,7 @@ import PurchaseError from '$mp/components/Modal/PurchaseError'
 import ErrorDialog from '$mp/components/Modal/ErrorDialog'
 import NoBalanceDialog from '$mp/components/Modal/NoBalanceDialog'
 import ChooseAccessPeriodDialog from '$mp/components/Modal/ChooseAccessPeriodDialog'
-import ConnectEthereumAddressDialog from '$mp/components/Modal/ConnectEthereumAddressDialog'
 import useIsMounted from '$shared/hooks/useIsMounted'
-import useEthereumIdentities from '$shared/modules/integrationKey/hooks/useEthereumIdentities'
 import type { Ref, UseStateTuple } from '$shared/flowtype/common-types'
 import Web3ErrorDialog from '$shared/components/Web3ErrorDialog'
 import { isDataUnionProduct } from '$mp/utils/product'
@@ -43,7 +41,6 @@ export const PurchaseDialog = ({ productId, api }: Props) => {
     const { web3Error, checkingWeb3, account } = useWeb3Status()
     const { isPending: isContractProductLoadPending } = usePending('contractProduct.LOAD')
     const { isPending: isPurchasePending, wrap: wrapPurchase } = usePending('product.PURCHASE')
-    const { isPending: isLinkAccountPending, wrap: wrapLinkAccount } = usePending('product.LINK_ACCOUNT')
     const [step, setStep] = useState(null)
     const [purchaseError, setPurchaseError] = useState(null)
     const dataPerUsd = useSelector(selectDataPerUsd)
@@ -51,7 +48,6 @@ export const PurchaseDialog = ({ productId, api }: Props) => {
     const isMounted = useIsMounted()
     const contractProduct = useSelector(selectContractProduct)
     const contractProductError = useSelector(selectContractProductError)
-    const { load: loadEthIdentities, isLinked, connect: connectIdentity } = useEthereumIdentities()
     const accessPeriodParams: Ref<AccessPeriod> = useRef({
         time: '1',
         timeUnit: 'hour',
@@ -71,20 +67,15 @@ export const PurchaseDialog = ({ productId, api }: Props) => {
     const isDataUnion = !!(product && isDataUnionProduct(product))
     dataUnionRef.current = isDataUnion ? dataUnion : undefined
 
-    // Check if current metamask account is linked to Streamr account
-    const accountLinked = useMemo(() => !!account && isLinked(account), [isLinked, account])
-
     // Start loading the contract product & clear allowance state
     useEffect(() => {
-        loadEthIdentities()
-
         loadContractProduct(productId)
             .then(() => {
                 if (isMounted()) {
                     setStep(purchaseFlowSteps.ACCESS_PERIOD)
                 }
             })
-    }, [dispatch, loadEthIdentities, loadContractProduct, productId, isMounted])
+    }, [dispatch, loadContractProduct, productId, isMounted])
 
     useEffect(() => {
         if (!account) { return }
@@ -101,38 +92,11 @@ export const PurchaseDialog = ({ productId, api }: Props) => {
 
     const { pricePerSecond, priceCurrency } = contractProduct || {}
 
-    const onLinkAccount = useCallback(async () => (
-        wrapLinkAccount(async () => {
-            let succeeded = false
-
-            try {
-                await connectIdentity(account || 'Account name')
-                succeeded = true
-            } catch (e) {
-                console.warn(e)
-                if (isMounted()) {
-                    setPurchaseError(e)
-                }
-            } finally {
-                if (isMounted()) {
-                    // continue with purchase
-                    if (succeeded) {
-                        setStep(purchaseFlowSteps.SUMMARY)
-                    }
-                }
-            }
-        })
-    ), [wrapLinkAccount, account, isMounted, connectIdentity])
-
     const onSetAccessPeriod = useCallback(async (accessPeriod: AccessPeriod) => {
         accessPeriodParams.current = accessPeriod
 
-        if (accountLinked) {
-            setStep(purchaseFlowSteps.SUMMARY)
-        } else {
-            setStep(purchaseFlowSteps.LINK_ACCOUNT)
-        }
-    }, [accountLinked])
+        setStep(purchaseFlowSteps.SUMMARY)
+    }, [])
 
     const onApprovePurchase = useCallback(async () => (
         wrapPurchase(async () => {
@@ -279,16 +243,6 @@ export const PurchaseDialog = ({ productId, api }: Props) => {
                     price,
                     approxUsd,
                 }}
-            />
-        )
-    }
-
-    if (step === purchaseFlowSteps.LINK_ACCOUNT) {
-        return (
-            <ConnectEthereumAddressDialog
-                onCancel={onClose}
-                onSet={onLinkAccount}
-                waiting={isLinkAccountPending}
             />
         )
     }

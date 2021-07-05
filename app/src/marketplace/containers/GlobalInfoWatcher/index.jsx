@@ -17,7 +17,6 @@ import Web3Poller from '$shared/web3/web3Poller'
 import { useBalances } from '$shared/hooks/useBalances'
 import { selectUserData } from '$shared/modules/user/selectors'
 import type { NumberString } from '$shared/flowtype/common-types'
-import useEthereumIdentities from '$shared/modules/integrationKey/hooks/useEthereumIdentities'
 import { isEthereumAddress } from '$mp/utils/validate'
 
 type Props = {
@@ -99,8 +98,7 @@ export const GlobalInfoWatcher = ({ children }: Props) => {
         }
     }, [handleTransactionComplete, handleTransactionError])
 
-    // Fetch integrations keys and poll balances
-    const { load: loadIntegrationKeys } = useEthereumIdentities()
+    // Poll balances for username
     const { update: updateBalances } = useBalances()
     const balanceTimeout = useRef()
     const balancePoll = useCallback(() => {
@@ -121,7 +119,7 @@ export const GlobalInfoWatcher = ({ children }: Props) => {
         return () => {
             clearTimeout(balanceTimeout.current)
         }
-    }, [loadIntegrationKeys, balancePoll, username])
+    }, [balancePoll, username])
 
     // Poll network
     useEffect(() => {

@@ -152,10 +152,6 @@
                 "show": "<api>/products/:productId/permissions/:id"
             }
         },
-        "integrationKeys": {
-            "index": "<api>/integration_keys",
-            "show": "<api>/integration_keys/:id"
-        },
         "storageNodes": {
             "index": "<api>/streams/:id/storageNodes",
             "addresses": {

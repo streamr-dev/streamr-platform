@@ -24,12 +24,6 @@ const mockState = {
                 },
             },
         },
-        integrationKeys: {
-            test: '12345',
-        },
-    },
-    integrationKey: {
-        ethereumIdentities: ['test'],
     },
 }
 
