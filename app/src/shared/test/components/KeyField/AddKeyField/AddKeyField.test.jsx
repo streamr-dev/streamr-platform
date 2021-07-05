@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 
-import AddKeyField from '$userpages/components/KeyField/AddKeyField'
+import AddKeyField from '$shared/components/KeyField/AddKeyField'
 
 describe('AddKeyField', () => {
     describe('basic', () => {
@@ -20,7 +20,9 @@ describe('AddKeyField', () => {
                 label={label}
             />)
 
-            el.find('Button').simulate('click', { preventDefault() {} })
+            el.find('Button').simulate('click', {
+                preventDefault() {},
+            })
 
             expect(el.find('Button').length).toBe(0)
             expect(el.find('KeyFieldEditor').length).toBe(1)
@@ -34,7 +36,9 @@ describe('AddKeyField', () => {
                 label={label}
             />)
 
-            el.find('Button').simulate('click', { preventDefault() {} })
+            el.find('Button').simulate('click', {
+                preventDefault() {},
+            })
 
             expect(el.find('Button').length).toBe(0)
             expect(el.find('KeyFieldEditor').length).toBe(1)
@@ -55,7 +59,9 @@ describe('AddKeyField', () => {
                 onSave={onSave}
             />)
 
-            el.find('Button').simulate('click', { preventDefault() {} })
+            el.find('Button').simulate('click', {
+                preventDefault() {},
+            })
 
             expect(el.find('Button').length === 0)
             expect(el.find('KeyFieldEditor').length === 1)
@@ -83,7 +89,9 @@ describe('AddKeyField', () => {
                 onSave={onSave}
             />)
 
-            el.find('Button').simulate('click', { preventDefault() {} })
+            el.find('Button').simulate('click', {
+                preventDefault() {},
+            })
 
             expect(el.find('Button').length).toBe(0)
             expect(el.find('KeyFieldEditor').length).toBe(1)

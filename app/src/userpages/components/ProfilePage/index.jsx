@@ -13,7 +13,6 @@ import TOCPage from '$shared/components/TOCPage'
 import { usePending } from '$shared/hooks/usePending'
 import useIsMounted from '$shared/hooks/useIsMounted'
 import { selectUserData } from '$shared/modules/user/selectors'
-import useEthereumIdentities from '$shared/modules/integrationKey/hooks/useEthereumIdentities'
 
 import Layout from '$shared/components/Layout'
 import CoreLayout from '$shared/components/Layout/Core'
@@ -23,21 +22,17 @@ import { NotificationIcon } from '$shared/utils/constants'
 import Nav from '$shared/components/Layout/Nav'
 import routes from '$routes'
 import ProfileSettings from './ProfileSettings'
-import IdentityHandler from './IdentityHandler/index'
 import DeleteAccount from './DeleteAccount'
 
 import styles from './profilePage.pcss'
 
 export const ProfilePage = () => {
     const { isPending: isSavePending, wrap } = usePending('user.SAVE')
-    const { isPending: isAddIdentityPending } = usePending('user.ADD_IDENTITY')
-    const { isPending: isAddPrivateKeyPending } = usePending('user.ADD_PRIVATE_KEY')
     const { isPending: isDeleteAccountPending } = usePending('user.DELETE_ACCOUNT')
     const { isPending: isAvatarUploadPending } = usePending('user.UPLOAD_AVATAR')
     const isMounted = useIsMounted()
     const dispatch = useDispatch()
     const history = useHistory()
-    const { fetching: isLoadingEthIdentities } = useEthereumIdentities()
 
     const doSaveCurrentUser = useCallback(() => dispatch(saveCurrentUser()), [dispatch])
     const redirectToUserPages = useCallback(() => history.push(routes.core()), [history])
@@ -68,11 +63,8 @@ export const ProfilePage = () => {
 
     const isLoading = !!(
         isSavePending ||
-        isAddIdentityPending ||
-        isAddPrivateKeyPending ||
         isDeleteAccountPending ||
-        isAvatarUploadPending ||
-        isLoadingEthIdentities
+        isAvatarUploadPending
     )
 
     return (
@@ -106,13 +98,6 @@ export const ProfilePage = () => {
             <TOCPage title="Settings">
                 <TOCPage.Section id="profile" title="Profile">
                     <ProfileSettings />
-                </TOCPage.Section>
-                <TOCPage.Section
-                    id="ethereum-accounts"
-                    title="Ethereum Accounts"
-                    linkTitle="ETH Accounts"
-                >
-                    <IdentityHandler />
                 </TOCPage.Section>
                 <TOCPage.Section
                     id="delete-account"

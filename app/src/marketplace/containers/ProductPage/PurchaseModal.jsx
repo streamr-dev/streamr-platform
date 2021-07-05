@@ -16,9 +16,7 @@ import { selectDataPerUsd } from '$mp/modules/global/selectors'
 import { transactionStates, DEFAULT_CURRENCY, paymentCurrencies, gasLimits } from '$shared/utils/constants'
 import useDataUnion from '$mp/containers/ProductController/useDataUnion'
 import NoBalanceError from '$mp/errors/NoBalanceError'
-import { IdentityExistsError } from '$shared/errors/Web3'
 import { getBalances } from '$mp/utils/web3'
-import { DuplicateIdentityDialog } from '$userpages/components/ProfilePage/IdentityHandler/IdentityChallengeDialog'
 import PurchaseTransactionProgress from '$mp/components/Modal/PurchaseTransactionProgress'
 import PurchaseSummaryDialog from '$mp/components/Modal/PurchaseSummaryDialog'
 import PurchaseComplete from '$mp/components/Modal/PurchaseComplete'
@@ -251,14 +249,6 @@ export const PurchaseDialog = ({ productId, api }: Props) => {
                     required={purchaseError.getRequired()}
                     balances={purchaseError.getBalances()}
                     paymentCurrency={paymentCurrency}
-                />
-            )
-        }
-
-        if (purchaseError instanceof IdentityExistsError) {
-            return (
-                <DuplicateIdentityDialog
-                    onClose={onClose}
                 />
             )
         }

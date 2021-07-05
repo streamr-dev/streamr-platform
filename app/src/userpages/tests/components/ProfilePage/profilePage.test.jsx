@@ -18,29 +18,15 @@ jest.mock('react-router-dom', () => ({
     })),
 }))
 
-jest.mock('$shared/modules/integrationKey/hooks/useEthereumIdentities', () => (
-    jest.fn().mockImplementation(() => ({
-        fetching: false,
-    }))
-))
-
 describe('ProfilePageHandler', () => {
     describe('render', () => {
         it('should have a ProfileSettings', () => {
             const el = shallow(<ProfilePage />)
             expect(el.find('ProfileSettings')).toBeTruthy()
         })
-        it('should have a APICredentials', () => {
+        it('should have a DeleteAccount', () => {
             const el = shallow(<ProfilePage />)
-            expect(el.find('APICredentials')).toBeTruthy()
-        })
-        it('should have a IntegrationKeyHandler', () => {
-            const el = shallow(<ProfilePage />)
-            expect(el.find('IntegrationKeyHandler')).toBeTruthy()
-        })
-        it('should have a IdentityHandler', () => {
-            const el = shallow(<ProfilePage />)
-            expect(el.find('IdentityHandler')).toBeTruthy()
+            expect(el.find('DeleteAccount')).toBeTruthy()
         })
     })
 })

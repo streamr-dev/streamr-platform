@@ -44,11 +44,11 @@ const AddKeyField = ({ label, addKeyFieldAllowed, labelType, onSave: onSaveProp 
                     waiting: false,
                 })
             }
-        } catch (error) {
+        } catch (e) {
             if (isMounted()) {
                 updateState({
                     waiting: false,
-                    error: error.message,
+                    error: e.message,
                 })
             }
         }
