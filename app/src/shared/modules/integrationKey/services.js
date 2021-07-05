@@ -19,8 +19,6 @@ import {
 } from '$shared/errors/Web3'
 import routes from '$routes'
 
-const GRAPH_API_URL = 'https://api.thegraph.com/subgraphs/name/ensdomains/ens'
-
 export const getIntegrationKeys = (): ApiResult<Array<IntegrationKey>> => get({
     url: routes.api.integrationKeys.index(),
 })
@@ -81,26 +79,4 @@ export const deleteIntegrationKey = (id: IntegrationKeyId): ApiResult<null> => d
     url: routes.api.integrationKeys.show({
         id,
     }),
-})
-
-export const getEnsDomains = ({ addresses }: {
-    addresses: Array<Address>,
-}): ApiResult<IntegrationKey> => post({
-    url: GRAPH_API_URL,
-    data: {
-        query: `
-            query {
-                domains(
-                    where: { owner_in: [${(addresses || []).map((address) => `"${address}"`).join(', ')}]}
-                    orderBy: name
-                ) {
-                    id
-                    name
-                    labelName
-                    labelhash
-                }
-            }
-        `,
-    },
-    useAuthorization: false,
 })
