@@ -14,7 +14,6 @@ describe('integrationKey - actions', () => {
         process.env.STREAMR_API_URL = ''
         jest.clearAllMocks()
         jest.restoreAllMocks()
-        jest.spyOn(services, 'getBalance').mockImplementation(jest.fn())
     })
 
     afterEach(() => {

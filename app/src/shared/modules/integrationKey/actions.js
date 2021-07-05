@@ -1,24 +1,19 @@
 // @flow
 
 import { createAction } from 'redux-actions'
-import BN from 'bignumber.js'
 
 import type { ErrorInUi, ReduxActionCreator } from '$shared/flowtype/common-types'
-import type { IntegrationKeyId, IntegrationKeyIdList, Balances, CreateIdentity } from '$shared/flowtype/integration-key-types'
+import type { IntegrationKeyId, IntegrationKeyIdList, CreateIdentity } from '$shared/flowtype/integration-key-types'
 import { integrationKeysSchema, integrationKeySchema } from '$shared/modules/entities/schema'
 import { handleEntities } from '$shared/utils/entities'
 import { integrationKeyServices } from '$shared/utils/constants'
-import type { Address } from '$shared/flowtype/web3-types'
-import { BalanceType } from '$shared/flowtype/integration-key-types'
 import type {
     IntegrationKeyIdActionCreator,
     IntegrationKeysActionCreator,
     IntegrationKeysErrorActionCreator,
-    SetBalanceActionCreator,
 } from './types'
 
 import * as services from './services'
-import { selectEthereumIdentities } from './selectors'
 import {
     INTEGRATION_KEYS_REQUEST,
     INTEGRATION_KEYS_SUCCESS,
@@ -32,7 +27,6 @@ import {
     CREATE_IDENTITY_REQUEST,
     CREATE_IDENTITY_SUCCESS,
     CREATE_IDENTITY_FAILURE,
-    SET_BALANCE,
 } from './constants'
 
 // get integration keys
@@ -92,45 +86,6 @@ const createIdentityFailure: IntegrationKeysErrorActionCreator = createAction(
     }),
 )
 
-// account balances
-const setBalance: SetBalanceActionCreator = createAction(
-    SET_BALANCE,
-    (account: Address, balances: Balances) => ({
-        account,
-        balances,
-    }),
-)
-
-export const updateBalance = (account: Address) => async (dispatch: Function) => {
-    let accountEthBalance = BN(0)
-    let accountDataBalance = BN(0)
-
-    try {
-        accountEthBalance = await services.getBalance({
-            address: account,
-            type: BalanceType.ETH,
-            usePublicNode: true,
-        })
-    } catch (e) {
-        console.warn(e)
-    }
-
-    try {
-        accountDataBalance = await services.getBalance({
-            address: account,
-            type: BalanceType.DATA,
-            usePublicNode: true,
-        })
-    } catch (e) {
-        console.warn(e)
-    }
-
-    dispatch(setBalance(account, {
-        [BalanceType.ETH]: accountEthBalance,
-        [BalanceType.DATA]: accountDataBalance,
-    }))
-}
-
 // Fetch linked web3 accounts from integration keys
 export const fetchIntegrationKeys = () => (dispatch: Function) => {
     dispatch(integrationKeysRequest())
@@ -158,17 +113,6 @@ export const fetchIntegrationKeys = () => (dispatch: Function) => {
             }))
             throw error
         })
-}
-
-export const updateBalances = () => (dispatch: Function, getState: Function) => {
-    const state = getState()
-    const ethIdentities = selectEthereumIdentities(state)
-
-    const uniqueAccounts = [...(new Set([
-        ...(ethIdentities || []).map(({ json }) => json.address).filter(Boolean),
-    ]))]
-
-    uniqueAccounts.forEach((account) => dispatch(updateBalance(account)))
 }
 
 export const deleteIntegrationKey = (id: IntegrationKeyId) => (dispatch: Function) => {
@@ -211,13 +155,6 @@ export const createIdentity = (args: CreateIdentity) => (dispatch: Function) => 
         .then((result) => {
             const newId = handleEntities(integrationKeySchema, dispatch)(result)
             dispatch(createIdentitySuccess(newId))
-
-            // update account balance
-            const { address } = (result.json || {})
-
-            if (address) {
-                dispatch(updateBalance(address))
-            }
 
             return newId
         }, (error) => {

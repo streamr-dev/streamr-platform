@@ -15,5 +15,3 @@ export const CREATE_IDENTITY_FAILURE = 'shared/integrationKey/CREATE_IDENTITY_FA
 export const EDIT_INTEGRATION_KEY_REQUEST = 'shared/integrationKey/EDIT_INTEGRATION_KEY_REQUEST'
 export const EDIT_INTEGRATION_KEY_SUCCESS = 'shared/integrationKey/EDIT_INTEGRATION_KEY_SUCCESS'
 export const EDIT_INTEGRATION_KEY_FAILURE = 'shared/integrationKey/EDIT_INTEGRATION_KEY_FAILURE'
-
-export const SET_BALANCE = 'shared/integrationKey/SET_BALANCE'

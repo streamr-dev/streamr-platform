@@ -26,7 +26,6 @@ import useModal from '$shared/hooks/useModal'
 import ConfirmDialog from '$shared/components/ConfirmDialog'
 import SvgIcon from '$shared/components/SvgIcon'
 import usePreventNavigatingAway from '$shared/hooks/usePreventNavigatingAway'
-import useEthereumIdentities from '$shared/modules/integrationKey/hooks/useEthereumIdentities'
 import { getEnsDomains } from '$shared/modules/integrationKey/services'
 import Spinner from '$shared/components/Spinner'
 import Button from '$shared/components/Button'
@@ -180,7 +179,6 @@ const defaultStreamData = {
 }
 
 export const ADD_DOMAIN_URL = 'https://ens.domains'
-const CONNECT_ETH_ACCOUNT = '::eth/connect_account'
 const ADD_ENS_DOMAIN = '::ens/add_domain'
 
 export const PathnameTooltip = () => (
@@ -256,15 +254,15 @@ const UnstyledNew = ({ currentUser, ...props }) => {
     const dispatch = useDispatch()
     const history = useHistory()
     const { api: confirmExitDialog } = useModal('confirmExit')
-    const { load: loadIntegrationKeys, ethereumIdentities } = useEthereumIdentities()
     const [domains, setDomains] = useState([])
     const [loadingDomains, setLoadingDomains] = useState(true)
-    const ethereumIdentitiesRef = useRef([])
-    ethereumIdentitiesRef.current = ethereumIdentities
     const isMounted = useIsMounted()
+    const currentUserRef = useRef(undefined)
+    currentUserRef.current = currentUser
 
     const loadDomains = useCallback(async () => {
-        const addresses = ethereumIdentitiesRef.current.map(({ json }) => json.address)
+        const { username } = currentUserRef.current || {}
+        const addresses = (!!username && isEthereumAddress(username)) ? [username] : []
 
         try {
             const { data } = await getEnsDomains({
@@ -284,22 +282,15 @@ const UnstyledNew = ({ currentUser, ...props }) => {
     }, [isMounted])
 
     useEffect(() => {
-        loadIntegrationKeys()
-            .then(loadDomains)
-    }, [loadIntegrationKeys, loadDomains])
+        loadDomains()
+    }, [loadDomains])
 
     const [groupedOptions, domainOptions] = useMemo(() => {
-        const ethAccountOptions = ethereumIdentities.map(({ json }) => ({
-            label: truncate(json.address),
-            value: json.address,
-        }))
-
-        if (ethAccountOptions.length < 1) {
-            ethAccountOptions.push({
-                label: 'Connect account',
-                value: CONNECT_ETH_ACCOUNT,
-            })
-        }
+        const { username } = currentUserRef.current || {}
+        const ethAccountOptions = (!!username && isEthereumAddress(username)) ? [{
+            label: truncate(username),
+            value: username,
+        }] : []
 
         const ensOptions = [
             ...domains.map(({ name }) => ({
@@ -317,14 +308,14 @@ const UnstyledNew = ({ currentUser, ...props }) => {
             options: ensOptions,
         },
         {
-            label: 'Eth Accounts',
+            label: 'Eth Account',
             options: ethAccountOptions,
         }]
 
         const domainOptions = groupedOptions.flatMap((group) => group.options)
 
         return [groupedOptions, domainOptions]
-    }, [domains, ethereumIdentities])
+    }, [domains])
 
     // update default domain if undefined
     useEffect(() => {
@@ -332,12 +323,6 @@ const UnstyledNew = ({ currentUser, ...props }) => {
 
         if (isEthereumAddress(currentUser.username)) {
             updateStream({ domain: currentUser.username })
-        } else {
-            const { address } = (ethereumIdentitiesRef.current[0] || {}).json || {}
-
-            if (address) {
-                updateStream({ domain: address })
-            }
         }
     }, [domain, currentUser, domainOptions, updateStream])
 
@@ -368,14 +353,10 @@ const UnstyledNew = ({ currentUser, ...props }) => {
     const onDomainChange = useCallback(({ value: domain }) => {
         if (domain === ADD_ENS_DOMAIN) {
             window.open(ADD_DOMAIN_URL, '_blank', 'noopener noreferrer')
-        } else if (domain === CONNECT_ETH_ACCOUNT) {
-            history.push(routes.profile({}, {
-                hash: 'ethereum-accounts',
-            }))
         } else {
             updateStream({ domain })
         }
-    }, [history, updateStream])
+    }, [updateStream])
 
     const onPathnameChange = useCallback((e) => {
         const pathname = e.target.value

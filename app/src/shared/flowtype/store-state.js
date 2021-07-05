@@ -9,9 +9,9 @@ import type { TransactionEntities } from '$shared/flowtype/web3-types'
 import type { StreamEntities } from '$shared/flowtype/stream-types'
 import type { StoreState as MarketplaceStoreState } from '$mp/flowtype/store-state'
 import type { StoreState as UserPagesStoreState } from '$userpages/flowtype/states/store-state'
-import type { User } from '$shared/flowtype/user-types'
+import type { User, Balances } from '$shared/flowtype/user-types'
 import type { ErrorInUi } from '$shared/flowtype/common-types'
-import type { IntegrationKeyEntities, IntegrationKeyIdList, BalanceList } from '$shared/flowtype/integration-key-types'
+import type { IntegrationKeyEntities, IntegrationKeyIdList } from '$shared/flowtype/integration-key-types'
 
 // entities
 export type EntitiesState = {
@@ -30,6 +30,7 @@ export type EntitiesState = {
 // user
 export type UserState = {
     user: ?User,
+    balances: Balances,
     fetchingUserData: boolean,
     userDataError: ?ErrorInUi,
     deletingUserAccount: boolean,
@@ -45,7 +46,6 @@ export type IntegrationKeyState = {
     creatingIdentityError: ?ErrorInUi,
     removingIntegrationKey: boolean,
     removingIntegrationError: ?ErrorInUi,
-    balances: BalanceList
 }
 
 export type StoreState = MarketplaceStoreState & UserPagesStoreState & {

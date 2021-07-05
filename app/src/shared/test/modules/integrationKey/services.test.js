@@ -1,8 +1,6 @@
 import moxios from 'moxios'
 
 import * as services from '$shared/modules/integrationKey/services'
-import * as utils from '$mp/utils/web3'
-import { BalanceType } from '$shared/flowtype/integration-key-types'
 
 import { integrationKeyServices } from '$shared/utils/constants'
 import { ChallengeFailedError } from '$shared/errors/Web3'
@@ -256,45 +254,6 @@ describe('integrationKey - services', () => {
 
             const result = await services.deleteIntegrationKey(id)
             expect(result).toBe(null)
-        })
-    })
-
-    describe('getBalance', () => {
-        it('gets ETH balance', async () => {
-            jest.spyOn(utils, 'getEthBalance').mockImplementation(jest.fn(() => '123'))
-
-            const balance = await services.getBalance({
-                address: 'testAccount',
-                type: BalanceType.ETH,
-            })
-
-            expect(balance).toBe('123')
-        })
-
-        it('gets token balance', async () => {
-            jest.spyOn(utils, 'getDataTokenBalance').mockImplementation(jest.fn(() => '123'))
-
-            const balance = await services.getBalance({
-                address: 'testAccount',
-                type: BalanceType.DATA,
-            })
-            expect(balance).toBe('123')
-        })
-
-        it('throws an error if type is unknown', async () => {
-            let balance
-            let error
-            try {
-                balance = await services.getBalance({
-                    adress: 'testAccount',
-                    type: 'someToken',
-                })
-            } catch (e) {
-                error = e
-            }
-
-            expect(error).toBeDefined()
-            expect(balance).not.toBeDefined()
         })
     })
 })

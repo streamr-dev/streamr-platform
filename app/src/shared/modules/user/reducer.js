@@ -7,6 +7,7 @@ import type { UserState } from '$shared/flowtype/store-state'
 import type {
     UserDataAction,
     UserErrorAction,
+    SetBalanceAction,
 } from './types'
 import {
     USER_DATA_REQUEST,
@@ -20,10 +21,12 @@ import {
     DELETE_USER_ACCOUNT_REQUEST,
     DELETE_USER_ACCOUNT_SUCCESS,
     DELETE_USER_ACCOUNT_FAILURE,
+    SET_BALANCE,
 } from './constants'
 
 export const initialState: UserState = {
     user: null,
+    balances: {},
     fetchingUserData: false,
     userDataError: null,
     saved: true,
@@ -99,6 +102,14 @@ const reducer: (UserState) => UserState = handleActions({
         deleteUserAccountError: action.payload.error,
     }),
 
+    [SET_BALANCE]: (state: UserState, action: SetBalanceAction) => ({
+        ...state,
+        balances: {
+            ...state.balances,
+            // $FlowFixMe balances is an object
+            ...action.payload.balances,
+        },
+    }),
 }, {
     ...initialState,
     // Loading the site always triggers fetching the user. `userIsAuthenticated` gets
