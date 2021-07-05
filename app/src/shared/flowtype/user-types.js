@@ -13,6 +13,12 @@ export type User = {
     imageUrlLarge: string,
 }
 
+export type Challenge = {
+    challenge: string,
+    expires: Date,
+    id: string,
+}
+
 export const BalanceType = {
     ETH: 'ETH',
     DATA: 'DATA',

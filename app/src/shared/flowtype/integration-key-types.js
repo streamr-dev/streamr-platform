@@ -21,12 +21,6 @@ export type IntegrationKeyEntities = {
     [IntegrationKeyId]: IntegrationKey,
 }
 
-export type Challenge = {
-    challenge: string,
-    expires: Date,
-    id: string,
-}
-
 export type Account = {
     id: IntegrationKeyId,
     name: string,

@@ -5,11 +5,12 @@ import type { ApiResult } from '$shared/flowtype/common-types'
 import {
     type IntegrationKeyId,
     type IntegrationKey,
-    type Challenge,
     type CreateIdentity,
 } from '$shared/flowtype/integration-key-types'
+import { type Challenge } from '$shared/flowtype/user-types'
 import type { Address, Hash } from '$shared/flowtype/web3-types'
 import { integrationKeyServices } from '$shared/utils/constants'
+import { createChallenge } from '$shared/modules/user/services'
 
 import {
     ChallengeFailedError,
@@ -33,13 +34,6 @@ export const editIntegrationKey = (id: IntegrationKeyId, name: string): ApiResul
             name,
         },
     })
-
-export const createChallenge = (account: Address): ApiResult<Challenge> => post({
-    url: routes.api.loginChallenge({
-        account,
-    }),
-    useAuthorization: false,
-})
 
 export const createEthereumIdentity = (
     name: string,

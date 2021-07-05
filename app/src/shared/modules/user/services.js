@@ -2,7 +2,7 @@
 
 import { get, post, put, del } from '$shared/utils/api'
 import type { ApiResult } from '$shared/flowtype/common-types'
-import { type User, BalanceType } from '$shared/flowtype/user-types'
+import { type User, type Challenge, BalanceType } from '$shared/flowtype/user-types'
 import type { Address } from '$shared/flowtype/web3-types'
 import { getDataTokenBalance, getEthBalance } from '$mp/utils/web3'
 import routes from '$routes'
@@ -37,6 +37,13 @@ export const uploadProfileAvatar = (image: File): Promise<void> => {
 
 export const deleteUserAccount = (): ApiResult<null> => del({
     url: routes.api.currentUser.index(),
+})
+
+export const createChallenge = (account: Address): ApiResult<Challenge> => post({
+    url: routes.api.loginChallenge({
+        account,
+    }),
+    useAuthorization: false,
 })
 
 type GetBalance = {

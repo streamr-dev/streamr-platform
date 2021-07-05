@@ -130,6 +130,32 @@ describe('user - services', () => {
         })
     })
 
+    describe('createChallenge', () => {
+        it('sends a POST request to get a challenge', async () => {
+            const account = '0x876EabF441B2EE5B5b0554Fd502a8E0600950cFa'
+            const data = {
+                expires: '2018-12-11T09:55:26Z',
+                challenge: 'This is a challenge created by Streamr',
+                id: '0fWncFCPW4CAeeBYKGAdUuHY8yN0Ty',
+            }
+
+            moxios.wait(() => {
+                const request = moxios.requests.mostRecent()
+                request.respondWith({
+                    status: 200,
+                    response: data,
+                })
+
+                expect(request.config.method).toBe('post')
+                expect(request.config.url).toBe(`/login/challenge/${account}`)
+                expect(request.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
+            })
+
+            const result = await services.createChallenge(account)
+            expect(result).toStrictEqual(data)
+        })
+    })
+
     describe('getBalance', () => {
         it('gets ETH balance', async () => {
             jest.spyOn(utils, 'getEthBalance').mockImplementation(jest.fn(() => '123'))
