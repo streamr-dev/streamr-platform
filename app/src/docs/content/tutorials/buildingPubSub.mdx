@@ -21,7 +21,7 @@ import tutorialStyles from '$docs/components/Pages/Tutorials/tutorials.pcss'
 Before proceeding with this tutorial, we assume you have connected your Ethereum account and that you have also <Link to={docsLinks.streams}>created your first stream</Link>.
 
 ### Publish to a stream
-The easiest way to push data to a stream is to use one of our <Link to={docsLinks.sdk}>SDKs</Link>, currently available in <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/streamr-client-javascript">Javascript</a>, <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/streamr-client-java">Java</a>. Client libraries for other languages are on the roadmap. Here is an example of publishing data to a stream using Streamr Javascript client.
+The easiest way to push data to a stream is to use one of our <Link to={docsLinks.sdk}>SDKs</Link>, currently available in <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/network-monorepo">Javascript</a>, <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/streamr-client-java">Java</a>. Client libraries for other languages are on the roadmap. Here is an example of publishing data to a stream using Streamr Javascript client.
 
 <CodeSnippet language="javascript" wrapLines showLineNumbers >{ClientPub}</CodeSnippet>
 
@@ -46,7 +46,7 @@ You will need to get a session token to publish to a stream - all the different 
 ### Subscribe to data
 Along with publishing data to a stream, subscribing is best done with one of our <Link to={docsLinks.sdk}>SDKs</Link>. Depending on how you've configured the stream share permissions inside the core app, the subscriber may not need to authenticate. 
 
-Here is the example from the Streamr JavaScript client <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/streamr-client-javascript">readme</a> on how to subscribe to a stream.
+Here is the example from the Streamr JavaScript client <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/network-monorepo">readme</a> on how to subscribe to a stream.
 
 <CodeSnippet language="javascript" wrapLines showLineNumbers >{ClientSub}</CodeSnippet>
 
