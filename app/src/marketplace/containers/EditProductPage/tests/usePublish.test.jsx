@@ -9,6 +9,7 @@ import * as contractProductServices from '$mp/modules/contractProduct/services'
 import * as dataUnionServices from '$mp/modules/dataUnion/services'
 import * as transactionActions from '$mp/modules/transactions/actions'
 import * as productServices from '$mp/modules/product/services'
+import * as streamsServices from '$mp/modules/streams/services'
 
 import { transactionStates, transactionTypes } from '$shared/utils/constants'
 import usePublish, { publishModes, actionsTypes } from '../usePublish'
@@ -501,6 +502,16 @@ describe('usePublish', () => {
                     .subscribe('finish', finishFn)
 
                 const putProductStub = jest.spyOn(productServices, 'putProduct').mockImplementation(() => Promise.resolve())
+                const getStreamsStub = jest.spyOn(streamsServices, 'getAllStreams')
+                    .mockImplementation(() => Promise.resolve([{
+                        id: '1',
+                    }, {
+                        id: '2',
+                    }, {
+                        id: '3',
+                    }, {
+                        id: '4',
+                    }]))
 
                 await result.queue.start()
 
@@ -511,6 +522,77 @@ describe('usePublish', () => {
                     streams: ['2', '3', '4'],
                     pendingChanges: undefined,
                 }, '1')
+                expect(getStreamsStub).toHaveBeenCalled()
+                expect(startedFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES)
+                expect(statusFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES, transactionStates.CONFIRMED)
+                expect(readyFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES)
+                expect(finishFn).toHaveBeenCalled()
+            })
+
+            it('removes streams from pending changes that do not exist', async () => {
+                let publish
+                function Test() {
+                    publish = usePublish()
+                    return null
+                }
+
+                mount((
+                    <Test />
+                ))
+
+                const product = {
+                    id: '1',
+                    name: 'Name',
+                    description: 'Description',
+                    streams: ['1', '3'],
+                    state: 'DEPLOYED',
+                    pendingChanges: {
+                        name: 'New name',
+                        streams: ['2', '3', '4'],
+                    },
+                }
+
+                let result
+                await act(async () => {
+                    result = await publish(product)
+                })
+
+                expect(result.mode).toBe(publishModes.REPUBLISH)
+                expect(result.queue.getActions().map(({ id }) => id)).toStrictEqual([
+                    actionsTypes.PUBLISH_PENDING_CHANGES,
+                ])
+                expect(result.queue.needsWeb3()).toBe(false)
+                expect(result.queue.needsOwner()).toStrictEqual([])
+
+                const startedFn = jest.fn()
+                const statusFn = jest.fn()
+                const readyFn = jest.fn()
+                const finishFn = jest.fn()
+
+                result.queue
+                    .subscribe('started', startedFn)
+                    .subscribe('status', statusFn)
+                    .subscribe('ready', readyFn)
+                    .subscribe('finish', finishFn)
+
+                const putProductStub = jest.spyOn(productServices, 'putProduct').mockImplementation(() => Promise.resolve())
+                const getStreamsStub = jest.spyOn(streamsServices, 'getAllStreams')
+                    .mockImplementation(() => Promise.resolve([{
+                        id: '1',
+                    }, {
+                        id: '2',
+                    }]))
+
+                await result.queue.start()
+
+                expect(putProductStub).toBeCalledWith({
+                    id: '1',
+                    name: 'New name',
+                    description: 'Description',
+                    streams: ['2'],
+                    pendingChanges: undefined,
+                }, '1')
+                expect(getStreamsStub).toHaveBeenCalled()
                 expect(startedFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES)
                 expect(statusFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES, transactionStates.CONFIRMED)
                 expect(readyFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES)
@@ -1093,6 +1175,16 @@ describe('usePublish', () => {
                 }
 
                 jest.spyOn(contractProductServices, 'redeployProduct').mockImplementation(() => tx)
+                const getStreamsStub = jest.spyOn(streamsServices, 'getAllStreams')
+                    .mockImplementation(() => Promise.resolve([{
+                        id: '1',
+                    }, {
+                        id: '2',
+                    }, {
+                        id: '3',
+                    }, {
+                        id: '4',
+                    }]))
 
                 const startedFn = jest.fn()
                 const statusFn = jest.fn()
@@ -1123,6 +1215,7 @@ describe('usePublish', () => {
                 expect(startedFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES)
                 expect(statusFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES, transactionStates.CONFIRMED)
                 expect(readyFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES)
+                expect(getStreamsStub).toHaveBeenCalled()
                 expect(putProductStub.mock.calls[0][0]).toMatchObject({
                     id: '1',
                     name: 'New name',
@@ -1167,6 +1260,16 @@ describe('usePublish', () => {
                 }
                 const updateContractStub = jest.spyOn(contractProductServices, 'updateContractProduct').mockImplementation(() => tx)
                 const addTransactionStub = jest.spyOn(transactionActions, 'addTransaction')
+                const getStreamsStub = jest.spyOn(streamsServices, 'getAllStreams')
+                    .mockImplementation(() => Promise.resolve([{
+                        id: '1',
+                    }, {
+                        id: '2',
+                    }, {
+                        id: '3',
+                    }, {
+                        id: '4',
+                    }]))
 
                 const product = {
                     id: '1',
@@ -1238,6 +1341,7 @@ describe('usePublish', () => {
                 expect(addTransactionStub).toBeCalledWith(hash, transactionTypes.UPDATE_CONTRACT_PRODUCT)
                 expect(readyFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES)
                 expect(readyFn).toHaveBeenCalledWith(actionsTypes.UPDATE_CONTRACT_PRODUCT)
+                expect(getStreamsStub).toHaveBeenCalled()
                 expect(putProductStub.mock.calls[0][0]).toMatchObject({
                     id: '1',
                     name: 'New name',
@@ -1681,6 +1785,16 @@ describe('usePublish', () => {
                 const setAdminFeeStub = jest.spyOn(dataUnionServices, 'setAdminFee').mockImplementation(() => tx)
                 const putProductStub = jest.spyOn(productServices, 'putProduct').mockImplementation(() => Promise.resolve())
                 const addTransactionStub = jest.spyOn(transactionActions, 'addTransaction')
+                const getStreamsStub = jest.spyOn(streamsServices, 'getAllStreams')
+                    .mockImplementation(() => Promise.resolve([{
+                        id: '1',
+                    }, {
+                        id: '2',
+                    }, {
+                        id: '3',
+                    }, {
+                        id: '4',
+                    }]))
 
                 const product = {
                     id: '1',
@@ -1741,6 +1855,7 @@ describe('usePublish', () => {
                 expect(startedFn).toHaveBeenCalledWith(actionsTypes.PUBLISH_PENDING_CHANGES)
                 expect(startedFn).toHaveBeenCalledWith(actionsTypes.UPDATE_ADMIN_FEE)
 
+                expect(getStreamsStub).toHaveBeenCalled()
                 expect(putProductStub).toBeCalledWith({
                     id: '1',
                     name: 'New name',
@@ -1805,6 +1920,16 @@ describe('usePublish', () => {
                 const updateContractStub = jest.spyOn(contractProductServices, 'updateContractProduct').mockImplementation(() => tx2)
                 const putProductStub = jest.spyOn(productServices, 'putProduct').mockImplementation(() => Promise.resolve())
                 const addTransactionStub = jest.spyOn(transactionActions, 'addTransaction')
+                const getStreamsStub = jest.spyOn(streamsServices, 'getAllStreams')
+                    .mockImplementation(() => Promise.resolve([{
+                        id: '1',
+                    }, {
+                        id: '2',
+                    }, {
+                        id: '3',
+                    }, {
+                        id: '4',
+                    }]))
 
                 const product = {
                     id: '1',
@@ -1876,6 +2001,7 @@ describe('usePublish', () => {
                 expect(startedFn).toHaveBeenCalledWith(actionsTypes.UPDATE_ADMIN_FEE)
                 expect(startedFn).toHaveBeenCalledWith(actionsTypes.UPDATE_CONTRACT_PRODUCT)
 
+                expect(getStreamsStub).toHaveBeenCalled()
                 expect(putProductStub.mock.calls[0][0]).toMatchObject({
                     id: '1',
                     name: 'New name',

@@ -21,6 +21,7 @@ import {
     postDeployFree,
     postSetDeploying,
 } from '$mp/modules/product/services'
+import { getAllStreams } from '$mp/modules/streams/services'
 
 import { getDataUnionOwner, getAdminFee, setAdminFee } from '$mp/modules/dataUnion/services'
 import { isUpdateContractProductRequired } from '$mp/utils/smartContract'
@@ -124,15 +125,18 @@ export default function usePublish() {
 
             queue.add({
                 id: actionsTypes.PUBLISH_PENDING_CHANGES,
-                handler: (update, done) => {
+                handler: async (update, done) => {
                     try {
-                        return putProduct(nextProduct, product.id || '').then(() => {
-                            update(transactionStates.CONFIRMED)
-                            done()
-                        }, (error) => {
-                            update(transactionStates.FAILED, error)
-                            done()
-                        })
+                        // Get all streams and verify that the added streams actually exist,
+                        // otherwise the product update will fail
+                        const streams = await getAllStreams()
+                        const streamIds = new Set(streams.map(({ id }) => id))
+                        nextProduct.streams = (nextProduct.streams || []).filter((id) => streamIds.has(id))
+
+                        await putProduct(nextProduct, product.id || '')
+
+                        update(transactionStates.CONFIRMED)
+                        done()
                     } catch (e) {
                         update(transactionStates.FAILED, e)
                         done()
