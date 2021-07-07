@@ -4,7 +4,7 @@ import React, { useMemo } from 'react'
 import BN from 'bignumber.js'
 
 import Balance from '$userpages/components/Balance'
-import { BalanceType } from '$shared/flowtype/integration-key-types'
+import { BalanceType } from '$shared/flowtype/user-types'
 import { useBalances } from '$shared/hooks/useBalances'
 
 const AccountsBalance = () => {
@@ -14,20 +14,10 @@ const AccountsBalance = () => {
     // that they will be present here.
     const { balances } = useBalances()
 
-    const { ethBalance, dataBalance } = useMemo(() => {
-        const { eth, data } = Object.values(balances).reduce(({ eth: prevEth, data: prevData }, innerBalance: Object) => ({
-            eth: prevEth.plus(innerBalance[BalanceType.ETH] || '0'),
-            data: prevData.plus(innerBalance[BalanceType.DATA] || '0'),
-        }), {
-            eth: BN(0),
-            data: BN(0),
-        })
-
-        return {
-            ethBalance: eth.decimalPlaces(4).toString(),
-            dataBalance: data.decimalPlaces(4).toString(),
-        }
-    }, [balances])
+    const { ethBalance, dataBalance } = useMemo(() => ({
+        ethBalance: BN(balances[BalanceType.ETH] || '0').decimalPlaces(4).toString(),
+        dataBalance: BN(balances[BalanceType.DATA] || '0').decimalPlaces(4).toString(),
+    }), [balances])
 
     return (
         <Balance>

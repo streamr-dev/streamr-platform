@@ -1,6 +1,8 @@
 import moxios from 'moxios'
 
 import * as services from '$shared/modules/user/services'
+import * as utils from '$mp/utils/web3'
+import { BalanceType } from '$shared/flowtype/user-types'
 
 describe('user - services', () => {
     let dateNowSpy
@@ -125,6 +127,71 @@ describe('user - services', () => {
 
             const result = await services.uploadProfileAvatar(imageToUpload)
             expect(result).toStrictEqual(data)
+        })
+    })
+
+    describe('createChallenge', () => {
+        it('sends a POST request to get a challenge', async () => {
+            const account = '0x876EabF441B2EE5B5b0554Fd502a8E0600950cFa'
+            const data = {
+                expires: '2018-12-11T09:55:26Z',
+                challenge: 'This is a challenge created by Streamr',
+                id: '0fWncFCPW4CAeeBYKGAdUuHY8yN0Ty',
+            }
+
+            moxios.wait(() => {
+                const request = moxios.requests.mostRecent()
+                request.respondWith({
+                    status: 200,
+                    response: data,
+                })
+
+                expect(request.config.method).toBe('post')
+                expect(request.config.url).toBe(`/login/challenge/${account}`)
+                expect(request.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
+            })
+
+            const result = await services.createChallenge(account)
+            expect(result).toStrictEqual(data)
+        })
+    })
+
+    describe('getBalance', () => {
+        it('gets ETH balance', async () => {
+            jest.spyOn(utils, 'getEthBalance').mockImplementation(jest.fn(() => '123'))
+
+            const balance = await services.getBalance({
+                address: 'testAccount',
+                type: BalanceType.ETH,
+            })
+
+            expect(balance).toBe('123')
+        })
+
+        it('gets token balance', async () => {
+            jest.spyOn(utils, 'getDataTokenBalance').mockImplementation(jest.fn(() => '123'))
+
+            const balance = await services.getBalance({
+                address: 'testAccount',
+                type: BalanceType.DATA,
+            })
+            expect(balance).toBe('123')
+        })
+
+        it('throws an error if type is unknown', async () => {
+            let balance
+            let error
+            try {
+                balance = await services.getBalance({
+                    adress: 'testAccount',
+                    type: 'someToken',
+                })
+            } catch (e) {
+                error = e
+            }
+
+            expect(error).toBeDefined()
+            expect(balance).not.toBeDefined()
         })
     })
 })

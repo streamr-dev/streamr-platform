@@ -36,7 +36,6 @@ import PurchaseTransactionProgress from '$mp/components/Modal/PurchaseTransactio
 import PurchaseComplete from '$mp/components/Modal/PurchaseComplete'
 import PurchaseError from '$mp/components/Modal/PurchaseError'
 import ReadyToPublishDialog from '$mp/components/Modal/ReadyToPublishDialog'
-import ConnectEthereumAddressDialog from '$mp/components/Modal/ConnectEthereumAddressDialog'
 import ErrorDialog from '$mp/components/Modal/ErrorDialog'
 import CropImageModal from '$mp/components/Modal/CropImageModal'
 import AddWhitelistedAddressDialog from '$mp/components/Modal/AddWhitelistedAddressDialog'
@@ -49,10 +48,6 @@ import WhitelistRequestAccessDialog from '$mp/components/Modal/WhitelistRequestA
 import SnippetDialog from '$userpages/components/SnippetDialog'
 import AvatarUploadDialog from '$userpages/components/ProfilePage/ProfileSettings/EditAvatarDialog/AvatarUploadDialog'
 import CropAvatarDialog from '$userpages/components/ProfilePage/ProfileSettings/EditAvatarDialog/CropAvatarDialog'
-import { SignatureRequestDialog, DuplicateIdentityDialog } from '$userpages/components/ProfilePage/IdentityHandler/IdentityChallengeDialog'
-import IdentityNameDialog from '$userpages/components/ProfilePage/IdentityHandler/IdentityNameDialog'
-import EthereumAccountCreatedDialog from '$userpages/components/ProfilePage/IdentityHandler/EthereumAccountCreatedDialog'
-import CopyPrivateKeyDialog from '$userpages/components/ProfilePage/IdentityHandler/CopyPrivateKeyDialog'
 import { DeleteAccountDialogComponent } from '$userpages/components/ProfilePage/DeleteAccount/DeleteAccountDialog'
 
 // shared
@@ -700,31 +695,6 @@ story('Marketplace/PurchaseTransactionProgress')
         )
     })
 
-story('Marketplace/ConnectEthereumAddressDialog')
-    .add('default', () => (
-        <ConnectEthereumAddressDialog
-            onCancel={action('close')}
-            onSet={action('onSet')}
-        />
-    ))
-    .add('default (iPhone)', () => (
-        <ConnectEthereumAddressDialog
-            onCancel={action('close')}
-            onSet={action('onSet')}
-        />
-    ), {
-        viewport: {
-            defaultViewport: 'iPhone',
-        },
-    })
-    .add('waiting', () => (
-        <ConnectEthereumAddressDialog
-            onCancel={action('close')}
-            onSet={action('onSet')}
-            waiting
-        />
-    ))
-
 story('Marketplace/PurchaseComplete')
     .add('default', () => (
         <PurchaseComplete
@@ -1059,62 +1029,5 @@ story('Profile/DeleteAccountDialog')
             onClose={action('onClose')}
             onSave={action('onSave')}
             waiting
-        />
-    ))
-
-story('EthereumIdentity/IdentityChallengeDialog')
-    .add('signature request', () => (
-        <SignatureRequestDialog
-            onClose={action('onClose')}
-        />
-    ))
-
-story('EthereumIdentity/DuplicateIdentityDialog')
-    .add('default', () => (
-        <DuplicateIdentityDialog
-            onClose={action('onClose')}
-        />
-    ))
-
-story('EthereumIdentity/IdentityNameDialog')
-    .add('default', () => (
-        <IdentityNameDialog
-            onClose={action('onClose')}
-            onCancel={action('onCancel')}
-            onSave={action('onSave')}
-        />
-    ))
-    .add('initial value', () => (
-        <IdentityNameDialog
-            onClose={action('onClose')}
-            onCancel={action('onCancel')}
-            onSave={action('onSave')}
-            initialValue="My Eth address"
-        />
-    ))
-    .add('waiting', () => (
-        <IdentityNameDialog
-            onClose={action('onClose')}
-            onCancel={action('onCancel')}
-            onSave={action('onSave')}
-            waiting
-        />
-    ))
-
-story('EthereumIdentity/EthereumAccountCreatedDialog')
-    .add('default', () => (
-        <EthereumAccountCreatedDialog
-            onBack={action('onBack')}
-            onSave={action('onSave')}
-            name={text('Name', 'Main Eth account')}
-            address={text('Address', '0x538a2Fa87E03B280e10C83AA8dD7E5B15B868BD9')}
-        />
-    ))
-
-story('EthereumIdentity/CopyPrivateKeyDialog')
-    .add('default', () => (
-        <CopyPrivateKeyDialog
-            onClose={action('onClose')}
-            privateKey={text('Private Key', '1234567890abcdefg')}
         />
     ))

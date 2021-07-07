@@ -2,14 +2,18 @@
 
 import { createAction } from 'redux-actions'
 import * as yup from 'yup'
+import BN from 'bignumber.js'
 
 import type { ErrorInUi, ReduxActionCreator } from '$shared/flowtype/common-types'
-import type { User } from '$shared/flowtype/user-types'
+import { type User, type Balances, BalanceType } from '$shared/flowtype/user-types'
 import { selectUserData } from '$shared/modules/user/selectors'
 import { clearStorage } from '$shared/utils/storage'
+import type { Address } from '$shared/flowtype/web3-types'
+import { isEthereumAddress } from '$mp/utils/validate'
 import type {
     UserErrorActionCreator,
     UserDataActionCreator,
+    SetBalanceActionCreator,
 } from './types'
 
 import * as services from './services'
@@ -28,6 +32,7 @@ import {
     DELETE_USER_ACCOUNT_REQUEST,
     DELETE_USER_ACCOUNT_SUCCESS,
     DELETE_USER_ACCOUNT_FAILURE,
+    SET_BALANCE,
 } from './constants'
 
 // Logout
@@ -175,4 +180,51 @@ export const deleteUserAccount = () => (dispatch: Function) => {
             }))
             throw error
         })
+}
+
+// account balances
+const setBalance: SetBalanceActionCreator = createAction(
+    SET_BALANCE,
+    (balances: Balances) => ({
+        balances,
+    }),
+)
+
+export const updateBalance = (account: Address) => async (dispatch: Function) => {
+    let accountEthBalance = BN(0)
+    let accountDataBalance = BN(0)
+
+    try {
+        accountEthBalance = await services.getBalance({
+            address: account,
+            type: BalanceType.ETH,
+            usePublicNode: true,
+        })
+    } catch (e) {
+        console.warn(e)
+    }
+
+    try {
+        accountDataBalance = await services.getBalance({
+            address: account,
+            type: BalanceType.DATA,
+            usePublicNode: true,
+        })
+    } catch (e) {
+        console.warn(e)
+    }
+
+    dispatch(setBalance({
+        [BalanceType.ETH]: accountEthBalance,
+        [BalanceType.DATA]: accountDataBalance,
+    }))
+}
+
+export const updateBalances = () => (dispatch: Function, getState: Function) => {
+    const state = getState()
+    const { username } = selectUserData(state) || {}
+
+    if (!!username && isEthereumAddress(username)) {
+        dispatch(updateBalance(username))
+    }
 }

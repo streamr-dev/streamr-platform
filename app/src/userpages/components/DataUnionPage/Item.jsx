@@ -21,7 +21,6 @@ import { getDataUnion } from '$mp/modules/dataUnion/services'
 import { fromAtto } from '$mp/utils/math'
 import useIsMounted from '$shared/hooks/useIsMounted'
 import useJoinRequests from '$mp/modules/dataUnion/hooks/useJoinRequests'
-import useIsEthIdentityNeeded from '$mp/containers/EditProductPage/useIsEthIdentityNeeded'
 import { withPendingChanges } from '$mp/containers/EditProductPage/state'
 import useFilterSort from '$userpages/hooks/useFilterSort'
 import { getFilters } from '$userpages/utils/constants'
@@ -304,8 +303,6 @@ const Item = ({ product, stats }: Props) => {
     const { wrap: wrapJoinRequestLoad, isPending: loadingJoinRequests } = usePending(`dataunion.item.${productId || ''}.JOINREQUESTS`)
     const { wrap: wrapPublish, isPending: isPublishPending } = usePending(`dataunion.item.${productId || ''}.PUBLISH`)
     const { wrap: wrapDeploy, isPending: isDeployPending } = usePending(`dataunion.item.${productId || ''}.DEPLOY`)
-    const { owner } = dataUnion || {}
-    const { isRequired: isEthIdentityRequired } = useIsEthIdentityNeeded(owner)
     const loading = loadingSubscriberCount || loadingDataUnion || loadingJoinRequests || isPublishPending || isDeployPending
 
     const { api: publishDialog } = useModal('publish')
@@ -395,7 +392,7 @@ const Item = ({ product, stats }: Props) => {
     }, [isOpen])
 
     const validate = useCallback((product) => {
-        const invalidFields = validateProduct(product, isEthIdentityRequired)
+        const invalidFields = validateProduct(product)
         const errors = Object.keys(invalidFields)
             .filter((field) => !!invalidFields[field])
             .map((field) => field)
@@ -425,7 +422,7 @@ const Item = ({ product, stats }: Props) => {
             valid,
             redirect: !valid,
         }
-    }, [isEthIdentityRequired, stats])
+    }, [stats])
 
     const redirectToEditProduct = useCallback((productId) => {
         if (!isMounted()) { return }

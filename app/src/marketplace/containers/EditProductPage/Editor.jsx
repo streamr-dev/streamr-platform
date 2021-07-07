@@ -5,9 +5,7 @@ import cx from 'classnames'
 
 import DetailsContainer from '$shared/components/Container/Details'
 import { isDataUnionProduct, isPaidProduct } from '$mp/utils/product'
-import useDataUnion from '$mp/containers/ProductController/useDataUnion'
 import useEditableProduct from '../ProductController/useEditableProduct'
-import useIsEthIdentityNeeded from './useIsEthIdentityNeeded'
 
 import EditorNav from './EditorNav'
 import ProductName from './ProductName'
@@ -17,7 +15,6 @@ import ProductStreams from './ProductStreams'
 import PriceSelector from './PriceSelector'
 import ProductDetails from './ProductDetails'
 import Whitelist from './Whitelist'
-import ConnectEthIdentity from './ConnectEthIdentity'
 import SharedSecrets from './SharedSecrets'
 import TermsOfUse from './TermsOfUse'
 
@@ -31,9 +28,6 @@ const Editor = ({ disabled }: Props) => {
     const product = useEditableProduct()
     const isDataUnion = isDataUnionProduct(product)
     const isPaid = isPaidProduct(product)
-    const dataUnion = useDataUnion()
-    const { owner } = dataUnion || {}
-    const { isRequired: showConnectEthIdentity } = useIsEthIdentityNeeded(owner)
 
     return (
         <div className={cx(styles.root, styles.Editor)}>
@@ -51,9 +45,6 @@ const Editor = ({ disabled }: Props) => {
                         <ProductDetails disabled={disabled} />
                         {!!isPaid && (
                             <Whitelist disabled={disabled} />
-                        )}
-                        {!!isDataUnion && !!showConnectEthIdentity && (
-                            <ConnectEthIdentity disabled={disabled} />
                         )}
                         <TermsOfUse disabled={disabled} />
                         {!!isDataUnion && (

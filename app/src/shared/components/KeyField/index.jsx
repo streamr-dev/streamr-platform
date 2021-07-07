@@ -70,8 +70,8 @@ type Props = {
 const includeIf = (condition: boolean, elements: Array<any>) => (condition ? elements : [])
 
 const UnstyledKeyField = ({
-    keyName,
-    value,
+    keyName: keyNameProp,
+    value: valueProp,
     hideValue,
     allowEdit,
     onSave: onSaveProp,
@@ -110,9 +110,9 @@ const UnstyledKeyField = ({
     }, [labelType])
 
     const onCopy = useCallback(() => {
-        copy(value || '')
+        copy(valueProp || '')
         notify()
-    }, [copy, value, notify])
+    }, [copy, valueProp, notify])
 
     const onCancel = useCallback(() => {
         setEditing(false)
@@ -193,7 +193,7 @@ const UnstyledKeyField = ({
                         <Label htmlFor="keyName">
                             &zwnj;
                             <KeyNameHolder>
-                                {keyName}
+                                {keyNameProp}
                             </KeyNameHolder>
                         </Label>
                         <div>
@@ -202,7 +202,7 @@ const UnstyledKeyField = ({
                     </LabelWrapper>
                     <WithInputActions actions={inputActions}>
                         <Text
-                            value={value && truncate(value)}
+                            value={valueProp && truncate(valueProp)}
                             readOnly
                             type={hidden ? 'password' : 'text'}
                         />
@@ -210,8 +210,8 @@ const UnstyledKeyField = ({
                 </KeyFieldContainer>
             ) : (
                 <KeyFieldEditor
-                    keyName={keyName}
-                    value={value}
+                    keyName={keyNameProp}
+                    value={valueProp}
                     onCancel={onCancel}
                     onSave={onSave}
                     waiting={waiting}

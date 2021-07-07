@@ -5,7 +5,6 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux'
 
 import entitiesReducer from '$shared/modules/entities/reducer'
 import userReducer from '$shared/modules/user/reducer'
-import integrationKeyReducer from '$shared/modules/integrationKey/reducer'
 import productsReducer from './marketplace/modules/productList/reducer'
 import myProductsReducer from './marketplace/modules/myProductList/reducer'
 import myPurchasesReducer from './marketplace/modules/myPurchaseList/reducer'
@@ -44,7 +43,6 @@ export function initStore() {
             productList: productsReducer,
             streams: streamsReducer,
             user: userReducer,
-            integrationKey: integrationKeyReducer,
             relatedProducts: relatedProductsReducer,
             transactions: transactionsReducer,
             ...userpagesReducers,

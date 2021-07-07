@@ -3,7 +3,7 @@
 import { createSelector } from 'reselect'
 
 import type { UserState, StoreState } from '$shared/flowtype/store-state'
-import type { User } from '$shared/flowtype/user-types'
+import type { User, Balances } from '$shared/flowtype/user-types'
 import type { ErrorInUi } from '$shared/flowtype/common-types'
 
 const selectUserState = (state: StoreState): UserState => state.user
@@ -85,4 +85,9 @@ export const selectAuthState: (StoreState) => AuthState = createSelector(
         isAuthenticated: !!isAuthenticatedState,
         authenticationFailed: !!authenticationFailedState,
     }),
+)
+
+export const selectBalances: (StoreState) => Balances = createSelector(
+    selectUserState,
+    (subState: UserState): Balances => subState.balances,
 )

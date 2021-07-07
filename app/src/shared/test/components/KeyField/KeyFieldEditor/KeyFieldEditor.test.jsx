@@ -1,7 +1,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 
-import KeyFieldEditor from '$userpages/components/KeyField/KeyFieldEditor'
+import KeyFieldEditor from '$shared/components/KeyField/KeyFieldEditor'
 
 describe('KeyFieldEditor', () => {
     describe('basic', () => {

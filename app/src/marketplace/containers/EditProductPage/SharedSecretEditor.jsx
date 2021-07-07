@@ -3,8 +3,8 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 
-import UnstyledKeyField from '$userpages/components/KeyField'
-import AddKeyField from '$userpages/components/KeyField/AddKeyField'
+import UnstyledKeyField from '$shared/components/KeyField'
+import AddKeyField from '$shared/components/KeyField/AddKeyField'
 import useDataUnionSecrets from '$mp/modules/dataUnion/hooks/useDataUnionSecrets'
 import type { Secret } from '$mp/modules/dataUnion/types'
 import { usePending } from '$shared/hooks/usePending'

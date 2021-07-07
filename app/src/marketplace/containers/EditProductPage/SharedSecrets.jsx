@@ -1,10 +1,9 @@
 // @flow
 
-import React, { useMemo } from 'react'
+import React from 'react'
 import cx from 'classnames'
 
 import useDataUnion from '$mp/containers/ProductController/useDataUnion'
-import useEthereumIdentities from '$shared/modules/integrationKey/hooks/useEthereumIdentities'
 import { isDataUnionProduct } from '$mp/utils/product'
 import { isEthereumAddress } from '$mp/utils/validate'
 import useProduct from '../ProductController/useProduct'
@@ -23,8 +22,6 @@ const SharedSecrets = ({ className, disabled }: Props) => {
     const dataunion = useDataUnion()
     const { owner } = dataunion || {}
     const isDeployed = isDataUnion && isEthereumAddress(owner)
-    const { isLinked } = useEthereumIdentities()
-    const ownerLinked = useMemo(() => !!owner && isLinked(owner), [isLinked, owner])
 
     return (
         <section id="shared-secrets" className={cx(styles.root, className)}>
@@ -43,7 +40,7 @@ const SharedSecrets = ({ className, disabled }: Props) => {
                     Create, name and revoke shared secrets them from here.
                 </p>
             )}
-            <SharedSecretEditor disabled={!!disabled || !isDeployed || !ownerLinked} />
+            <SharedSecretEditor disabled={!!disabled || !isDeployed} />
         </section>
     )
 }

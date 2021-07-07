@@ -12,18 +12,6 @@ const state = {
         },
         fetchingUserData: false,
         userDataError: null,
-        ethereumIdentities: [
-            {
-                address: '0x7Ce38183F7851EE6eEB9547B1E537fB362C79C10',
-                name: 'test1',
-            },
-            {
-                address: '0x13581255eE2D20e780B0cD3D07fac018241B5E03',
-                name: 'test2',
-            },
-        ],
-        fetchingIntegrationKeys: false,
-        integrationKeysError: null,
         logoutError: null,
         fetchingLogout: false,
     },
