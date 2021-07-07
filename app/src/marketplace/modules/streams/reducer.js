@@ -19,7 +19,6 @@ export const initialState: StreamsState = {
     ids: [],
     fetching: false,
     error: null,
-    hasMoreResults: false,
 }
 
 const reducer: (StreamsState) => StreamsState = handleActions({
@@ -39,7 +38,6 @@ const reducer: (StreamsState) => StreamsState = handleActions({
 
         return {
             ids,
-            hasMoreResults: action.payload.hasMoreResults,
             fetching: false,
             error: null,
         }
@@ -54,7 +52,6 @@ const reducer: (StreamsState) => StreamsState = handleActions({
     [CLEAR_STREAM_LIST]: (state: StreamsState) => ({
         ...state,
         ids: [],
-        hasMoreResults: false,
     }),
 }, initialState)
 

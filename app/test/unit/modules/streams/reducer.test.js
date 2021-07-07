@@ -11,7 +11,6 @@ describe('streams - reducer', () => {
             ids: [],
             fetching: true,
             error: null,
-            hasMoreResults: false,
         }
 
         expect(reducer(undefined, {
@@ -25,14 +24,12 @@ describe('streams - reducer', () => {
             ids: [1, 2],
             fetching: false,
             error: null,
-            hasMoreResults: true,
         }
 
         expect(reducer(undefined, {
             type: constants.GET_STREAMS_SUCCESS,
             payload: {
                 streams: [1, 2],
-                hasMoreResults: true,
             },
         })).toStrictEqual(expectedState)
     })
@@ -42,20 +39,17 @@ describe('streams - reducer', () => {
             ids: [1, 2],
             fetching: false,
             error: null,
-            hasMoreResults: true,
         }
         const expectedState = {
             ids: [1, 2, 3, 4],
             fetching: false,
             error: null,
-            hasMoreResults: false,
         }
 
         expect(reducer(state, {
             type: constants.GET_STREAMS_SUCCESS,
             payload: {
                 streams: [3, 4],
-                hasMoreResults: false,
             },
         })).toStrictEqual(expectedState)
     })
@@ -65,20 +59,17 @@ describe('streams - reducer', () => {
             ids: [1, 2, 3],
             fetching: false,
             error: null,
-            hasMoreResults: true,
         }
         const expectedState = {
             ids: [1, 2, 3, 4, 5],
             fetching: false,
             error: null,
-            hasMoreResults: false,
         }
 
         expect(reducer(state, {
             type: constants.GET_STREAMS_SUCCESS,
             payload: {
                 streams: [3, 4, 5],
-                hasMoreResults: false,
             },
         })).toStrictEqual(expectedState)
     })
@@ -90,7 +81,6 @@ describe('streams - reducer', () => {
             ids: [],
             fetching: false,
             error,
-            hasMoreResults: false,
         }
 
         expect(reducer(undefined, {
@@ -106,13 +96,11 @@ describe('streams - reducer', () => {
             ids: ['1', '2'],
             fetching: false,
             error: null,
-            hasMoreResults: false,
         }
         const expectedState = {
             ids: [],
             fetching: false,
             error: null,
-            hasMoreResults: false,
         }
 
         expect(reducer(state, {

@@ -92,7 +92,6 @@ export type StreamsState = {
     ids: StreamIdList,
     fetching: boolean,
     error: ?ErrorInUi,
-    hasMoreResults: boolean,
 }
 
 // Purchase

@@ -22,9 +22,8 @@ import type {
 
 const getStreamsRequest: ReduxActionCreator = createAction(GET_STREAMS_REQUEST)
 
-const getStreamsSuccess: StreamsActionCreator = createAction(GET_STREAMS_SUCCESS, (streams: StreamList, hasMoreResults: boolean) => ({
+const getStreamsSuccess: StreamsActionCreator = createAction(GET_STREAMS_SUCCESS, (streams: StreamList) => ({
     streams,
-    hasMoreResults,
 }))
 
 const getStreamsFailure: StreamsErrorActionCreator = createAction(GET_STREAMS_FAILURE, (error: ErrorInUi) => ({
@@ -33,13 +32,13 @@ const getStreamsFailure: StreamsErrorActionCreator = createAction(GET_STREAMS_FA
 
 export const clearStreamList: ReduxActionCreator = createAction(CLEAR_STREAM_LIST)
 
-export const getStreams = (params: Object = {}) => (dispatch: Function) => {
+export const getAllStreams = (params: Object = {}) => (dispatch: Function) => {
     dispatch(getStreamsRequest())
-    return api.getStreams(params)
-        .then(({ streams, hasMoreResults }) => {
+    return api.getAllStreams(params)
+        .then((streams) => {
             const { result, entities } = normalize(streams, streamsSchema)
             dispatch(updateEntities(entities))
-            dispatch(getStreamsSuccess(result, hasMoreResults))
+            dispatch(getStreamsSuccess(result))
         }, (error) => {
             dispatch(getStreamsFailure(error))
         })

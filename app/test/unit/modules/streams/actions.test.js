@@ -13,7 +13,7 @@ describe('streams - actions', () => {
         jest.restoreAllMocks()
     })
 
-    describe('getStreams', () => {
+    describe('getAllStreams', () => {
         it('gets streams succesfully', async () => {
             const streams = [
                 {
@@ -46,13 +46,10 @@ describe('streams - actions', () => {
 
             const { result, entities } = normalize(streams, streamsSchema)
 
-            const getStreamsStub = jest.spyOn(services, 'getStreams').mockImplementation(() => Promise.resolve({
-                streams,
-                hasMoreResults: false,
-            }))
+            const getStreamsStub = jest.spyOn(services, 'getAllStreams').mockImplementation(() => Promise.resolve(streams))
 
             const store = mockStore()
-            await store.dispatch(actions.getStreams())
+            await store.dispatch(actions.getAllStreams())
 
             const expectedActions = [
                 {
@@ -68,7 +65,6 @@ describe('streams - actions', () => {
                     type: constants.GET_STREAMS_SUCCESS,
                     payload: {
                         streams: result,
-                        hasMoreResults: false,
                     },
                 },
             ]
@@ -79,10 +75,10 @@ describe('streams - actions', () => {
 
         it('responds to errors', async () => {
             const error = new Error('Error')
-            jest.spyOn(services, 'getStreams').mockImplementation(() => Promise.reject(error))
+            jest.spyOn(services, 'getAllStreams').mockImplementation(() => Promise.reject(error))
 
             const store = mockStore()
-            await store.dispatch(actions.getStreams())
+            await store.dispatch(actions.getAllStreams())
 
             const expectedActions = [
                 {

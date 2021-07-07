@@ -5,9 +5,8 @@ import type { StreamIdList } from '$shared/flowtype/stream-types'
 
 export type StreamsAction = PayloadAction<{
     streams: StreamIdList,
-    hasMoreResults: boolean,
 }>
-export type StreamsActionCreator = (streams: StreamIdList, hasMoreResults: boolean) => StreamsAction
+export type StreamsActionCreator = (streams: StreamIdList) => StreamsAction
 
 export type StreamsErrorAction = PayloadAction<{
     error: ErrorFromApi

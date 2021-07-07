@@ -1,6 +1,7 @@
 import moxios from 'moxios'
 
 import * as services from '$mp/modules/streams/services'
+import * as api from '$shared/utils/api'
 
 describe('streams - services', () => {
     beforeEach(() => {
@@ -197,5 +198,30 @@ describe('streams - services', () => {
         })
         expect(result.streams).toStrictEqual(data.slice(5, 10))
         expect(result.hasMoreResults).toBe(false)
+    })
+
+    it('returns all streams from paged results', async () => {
+        process.env.STREAMR_API_URL = 'TEST_STREAMR_API_URL'
+        const allStreams = Array.from({
+            length: 1500,
+        }, (v, i) => ({
+            id: `stream-${i + 1}`,
+        }))
+
+        const mockGet = jest.fn()
+            .mockImplementationOnce(() => Promise.resolve(allStreams.slice(0, 1000)))
+            .mockImplementationOnce(() => Promise.resolve(allStreams.slice(999)))
+
+        jest.spyOn(api, 'get').mockImplementation(mockGet)
+
+        const result = await services.getAllStreams()
+        expect(result).toStrictEqual(allStreams)
+        expect(mockGet.mock.calls.length).toBe(2)
+        expect(mockGet.mock.calls[0][0]).toStrictEqual({
+            url: `${process.env.STREAMR_API_URL}/streams?max=1000&offset=0&operation=STREAM_SHARE&uiChannel=false`,
+        })
+        expect(mockGet.mock.calls[1][0]).toStrictEqual({
+            url: `${process.env.STREAMR_API_URL}/streams?max=1000&offset=999&operation=STREAM_SHARE&uiChannel=false`,
+        })
     })
 })
