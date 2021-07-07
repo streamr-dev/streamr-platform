@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 
 import Button from '$shared/components/Button'
@@ -11,6 +11,7 @@ import Text from '$ui/Text'
 import SvgIcon from '$shared/components/SvgIcon'
 import UnstyledLoadingIndicator from '$shared/components/LoadingIndicator'
 import useIsMounted from '$shared/hooks/useIsMounted'
+import { useDebounced } from '$shared/hooks/wrapCallback'
 import useDataUnionMembers from '$mp/modules/dataUnion/hooks/useDataUnionMembers'
 
 const Container = styled.div`
@@ -173,6 +174,7 @@ const ManageMembers = ({ dataUnion, className }: Props) => {
     const isMounted = useIsMounted()
     const dataUnionId = dataUnion && dataUnion.id
     const [search, setSearch] = useState('')
+    const [searchResults, setSearchResults] = useState([])
     const [processingMembers, setProcessingMembers] = useState([])
     const {
         loading: loadingMembers,
@@ -194,10 +196,12 @@ const ManageMembers = ({ dataUnion, className }: Props) => {
         load()
     }, [loadMembers, dataUnionId])
 
+    const debouncedSetSearch = useDebounced(setSearch, 250)
+
     const onSearchChange = useCallback((e) => {
         const search = e.target.value.trim()
-        setSearch(search)
-    }, [setSearch])
+        debouncedSetSearch(search)
+    }, [debouncedSetSearch])
 
     const removeMember = useCallback(async (memberAddress: string) => {
         setProcessingMembers((prev) => [
@@ -215,9 +219,22 @@ const ManageMembers = ({ dataUnion, className }: Props) => {
         }
     }, [dataUnionId, removeMembers, isMounted])
 
-    const searchResults = useMemo(() => (
-        searchMembers(search)
-    ), [search, searchMembers])
+    useEffect(() => {
+        const doSearch = async () => {
+            try {
+                console.log('Starting search with', search)
+                const results = await searchMembers(dataUnionId, search)
+
+                if (isMounted()) {
+                    setSearchResults(results)
+                    console.log('End search with results', results, 'for', search)
+                }
+            } catch (e) {
+                console.error('Could not load search results', e)
+            }
+        }
+        doSearch()
+    }, [search, dataUnionId, isMounted, searchMembers])
 
     const listing = search.length > 0 ? searchResults : members
 

@@ -9,6 +9,7 @@ declare class process {
         STREAMR_URL: string,
         STREAMR_WS_URL: string,
         GOOGLE_ANALYTICS_ID: string,
+        THE_GRAPH_API_URL: string,
         [key: string]: ?string
     }
 }

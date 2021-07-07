@@ -2,7 +2,7 @@ import React, { useMemo, useCallback, useState, useContext, useRef, useEffect } 
 
 import useIsMounted from '$shared/hooks/useIsMounted'
 import { useThrottled } from '$shared/hooks/wrapCallback'
-import { getAllMemberEvents, removeMembers } from '../services'
+import { getMemberStatuses, removeMembers, searchDataUnionMembers, getSelectedMemberStatuses } from '../services'
 
 const DataUnionMembersContext = React.createContext({})
 const VISIBLE_MEMBERS_LIMIT = 100
@@ -24,7 +24,7 @@ function useDataUnionMembers() {
     }, [])
 
     useEffect(() => () => {
-        // Cancel generator on unmount
+        // Cancel generators on unmount
         if (generator.current != null) {
             generator.current.return('Canceled')
             generator.current = null
@@ -34,12 +34,13 @@ function useDataUnionMembers() {
     const load = useCallback(async (dataUnionId) => {
         setLoading(true)
         try {
+            // Cancel previous generator
             if (generator.current != null) {
                 generator.current.return('Canceled')
                 generator.current = null
                 reset()
             }
-            generator.current = getAllMemberEvents(dataUnionId)
+            generator.current = getMemberStatuses(dataUnionId)
 
             // eslint-disable-next-line no-restricted-syntax
             for await (const event of generator.current) {
@@ -73,11 +74,11 @@ function useDataUnionMembers() {
         }
     }, [isMounted])
 
-    const search = useCallback((text) => (
-        membersRef.current
-            .filter((m) => ((text && text.length > 0) ? m.address.includes(text) : true))
-            .slice(0, VISIBLE_MEMBERS_LIMIT)
-    ), [])
+    const search = useCallback(async (dataUnionId, text) => {
+        const searchResults = await searchDataUnionMembers(dataUnionId, text)
+        const resultsWithStatuses = await getSelectedMemberStatuses(dataUnionId, searchResults.slice(0, VISIBLE_MEMBERS_LIMIT))
+        return resultsWithStatuses
+    }, [])
 
     return useMemo(() => ({
         loading,

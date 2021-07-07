@@ -605,8 +605,87 @@ export async function* getJoinsAndParts(id: DataUnionId, fromTimestamp: number):
     /* eslint-enable no-restricted-syntax, no-await-in-loop */
 }
 
+export const getMemberStatistics = async (id: DataUnionId, fromTimestamp: number, toTimestamp: number = Date.now()): Promise<Array<any>> => {
+    const accuracy = 'HOUR' // HOUR or DAY
+    const result = await post({
+        url: `${process.env.THE_GRAPH_API_URL}/subgraphs/name/streamr-dev/dataunion`,
+        data: {
+            query: `
+                query {
+                    dataUnionStatsBuckets(
+                        where: {
+                            type: "${accuracy}",
+                            startDate_gte: ${Math.floor(fromTimestamp / 1000)},
+                            endDate_lte: ${Math.ceil(toTimestamp / 1000)}
+                        },
+                        orderBy: startDate,
+                    ) {
+                        startDate,
+                        endDate,
+                        memberCountAtStart,
+                        memberCountChange,
+                    }
+                }
+            `,
+        },
+        useAuthorization: false,
+    })
+    return result.data.dataUnionStatsBuckets
+}
+
+export const getDataUnionMembers = async (id: DataUnionId, limit: number = 100): Promise<Array<string>> => {
+    const result = await post({
+        url: `${process.env.THE_GRAPH_API_URL}/subgraphs/name/streamr-dev/dataunion`,
+        data: {
+            query: `
+                query {
+                    dataUnions(where: { mainchainAddress: "${id.toLowerCase()}" }) {
+                        members(first: ${Math.floor(limit)}, orderBy: address, orderDirection: asc) {
+                            address
+                        }
+                    }
+                }
+            `,
+        },
+        useAuthorization: false,
+    })
+    if (result.data.dataUnions.length > 0) {
+        return result.data.dataUnions[0].members.map((m) => m.address)
+    }
+    return []
+}
+
+export const searchDataUnionMembers = async (id: DataUnionId, query: string, limit: number = 100): Promise<Array<string>> => {
+    const result = await post({
+        url: `${process.env.THE_GRAPH_API_URL}/subgraphs/name/streamr-dev/dataunion`,
+        data: {
+            query: `
+                query {
+                    members(where: { addressString_contains: "${query}"}, first: ${Math.floor(limit)}) {
+                        address
+                        dataunion {
+                            mainchainAddress
+                        }
+                    }
+                }
+            `,
+        },
+        useAuthorization: false,
+    })
+    if (result && result.data && result.data.members) {
+        // With limitations in full text search in The Graph,
+        // we cannot do filtering on the query itself so we
+        // have to manually pick results only for this dataunion.
+        const members = result.data.members
+            .filter((m) => m.dataunion.mainchainAddress === id)
+            .map((m) => m.address)
+        return members
+    }
+    return []
+}
+
 // eslint-disable-next-line camelcase
-async function* deprecated_getMemberEvents(id: DataUnionId, timestampFrom: number = 0): any {
+async function* deprecated_getMemberStatuses(id: DataUnionId, timestampFrom: number = 0): any {
     const dataUnion = await getDataUnion(id)
     const client = createClient()
     await client.ensureConnected()
@@ -635,43 +714,45 @@ async function* deprecated_getMemberEvents(id: DataUnionId, timestampFrom: numbe
     /* eslint-enable no-restricted-syntax */
 }
 
-export async function* getMemberEventsFromBlock(id: DataUnionId, blockNumber: number): any {
-    const client = createClient()
-    const web3 = getSidechainWeb3()
+export async function getSelectedMemberStatuses(id: DataUnionId, members: Array<string>): any {
+    const statuses = []
 
     /* eslint-disable no-restricted-syntax, no-await-in-loop */
-    for await (const joins of getSidechainEvents(id, 'MemberJoined', blockNumber)) {
-        for (const e of joins) {
-            const memberAddress = e.returnValues.member
-            const block = await web3.eth.getBlock(e.blockHash)
-            if (block) {
-                const dataUnion = client.getDataUnion(id)
-                const memberData = await dataUnion.getMemberStats(memberAddress)
-                yield {
-                    ...memberData,
-                    address: memberAddress,
-                }
-            }
+    for await (const status of getMemberStatusesWithClient(id, members)) {
+        statuses.push(status)
+    }
+    /* eslint-enable no-restricted-syntax, no-await-in-loop */
+
+    return statuses
+}
+
+async function* getMemberStatusesWithClient(id: DataUnionId, members: Array<string>): any {
+    const client = createClient()
+
+    /* eslint-disable no-restricted-syntax, no-await-in-loop */
+    for (const memberAddress of members) {
+        const dataUnion = client.getDataUnion(id)
+        const memberData = await dataUnion.getMemberStats(memberAddress)
+        yield {
+            ...memberData,
+            address: memberAddress,
         }
     }
     /* eslint-enable no-restricted-syntax, no-await-in-loop */
 }
 
-export async function* getMemberEventsFromTimestamp(id: DataUnionId, timestamp: number = 0): any {
-    const web3 = getSidechainWeb3()
-    const fromBlock = await getBlockNumberForTimestamp(web3, Math.floor(timestamp / 1000))
-
-    yield* getMemberEventsFromBlock(id, fromBlock)
+export async function* getMemberStatusesFromTheGraph(id: DataUnionId): any {
+    const members = await getDataUnionMembers(id)
+    yield* getMemberStatusesWithClient(id, members)
 }
 
-export async function* getAllMemberEvents(id: DataUnionId): any {
+export async function* getMemberStatuses(id: DataUnionId): any {
     const version = await getDataUnionVersion(id)
 
     if (version === 1) {
-        yield* deprecated_getMemberEvents(id)
+        yield* deprecated_getMemberStatuses(id)
     } else if (version === 2) {
-        const duFirstPossibleBlock = parseInt(process.env.DATA_UNION_FACTORY_SIDECHAIN_CREATION_BLOCK, 10)
-        yield* getMemberEventsFromBlock(id, duFirstPossibleBlock)
+        yield* getMemberStatusesFromTheGraph(id)
     }
 }
 

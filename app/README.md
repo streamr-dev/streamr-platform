@@ -62,6 +62,7 @@ To be able to use the Marketplace, you'll need to configure these variables into
 | DATA_UNION_OPERATOR_ADDRESS                       |                                                                      |
 | DATA_UNION_BLOCK_FREEZE_PERIOD_SECONDS            |                                                                      |
 | DATA_UNION_PUBLISH_MEMBER_LIMIT                   | Number of members required for a data union product before publish   |
+| THE_GRAPH_API_URL                                 | Address of the environment's The Graph API                           |
 
 Development values (set the values in your `.env`):
 
@@ -78,13 +79,14 @@ Development values (set the values in your `.env`):
 | WEB3_REQUIRED_NETWORK_ID                          | 8995                                         |                                 |
 | WEB3_PUBLIC_HTTP_PROVIDER                         | http://localhost:8545                        | Private network                 |
 | WEB3_PUBLIC_WS_PROVIDER                           | ws://localhost:8545                          |                                 |
-| WEB3_TRANSACTION_CONFIRMATION_BLOCKS              | 1                                            | Parity confirms tx immediately |
+| WEB3_TRANSACTION_CONFIRMATION_BLOCKS              | 1                                            | Parity confirms tx immediately  |
 | BUNDLE_ANALYSIS                                   | 1                                            | PLATFORM_ORIGIN_URL/report.html |
 | STREAMR_ENGINE_NODE_ADDRESSES                     | 0xFCAd0B19bB29D4674531d6f115237E16AfCE377c   |                                 |
 | UNISWAP_ADAPTOR_CONTRACT_ADDRESS                  | 0xe4ea76e830a659282368ca2e7e4d18c4ae52d8b3   |                                 |
 | DATA_UNION_OPERATOR_ADDRESS                       | 0xa3d1F77ACfF0060F7213D7BF3c7fEC78df847De1   |                                 |
 | DATA_UNION_BLOCK_FREEZE_PERIOD_SECONDS            | 1                                            |                                 |
 | DATA_UNION_PUBLISH_MEMBER_LIMIT                   | 1                                            |                                 |
+| THE_GRAPH_API_URL                                 | `http://localhost:8000`                      |                                 |
 
 Optional config values:
 

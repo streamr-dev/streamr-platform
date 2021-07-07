@@ -71,6 +71,7 @@ jobs:
           DATA_UNION_SIDECHAIN_PROVIDER: https://rpc.xdaichain.com/
           DATA_UNION_SIDECHAIN_ID: 100
           DATAUNION_VERSION: 2
+          THE_GRAPH_API_URL: https://api.thegraph.com
         run: npm run build --if-present
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

@@ -104,7 +104,7 @@ const UnstyledDataUnionStats = ({
                                 )}
                                 {dataUnion && dataUnion.version && dataUnion.version === 2 && (
                                     <MembersGraphV2
-                                        memberCount={memberCount.total}
+                                        memberCount={memberCount.active}
                                         shownDays={days}
                                         dataUnionAddress={dataUnion.id}
                                     />

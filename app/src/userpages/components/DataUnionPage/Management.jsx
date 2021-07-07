@@ -114,7 +114,7 @@ const Management = ({ product, joinRequests, dataUnion, className }: Props) => {
                     />
                 ) : (
                     <MembersGraphV2
-                        memberCount={(memberCount && memberCount.total) || 0}
+                        memberCount={(memberCount && memberCount.active) || 0}
                         shownDays={days}
                         dataUnionAddress={dataUnion && dataUnion.id}
                     />
