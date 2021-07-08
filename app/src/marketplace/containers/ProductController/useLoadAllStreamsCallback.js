@@ -5,15 +5,15 @@ import { useDispatch } from 'react-redux'
 
 import usePending from '$shared/hooks/usePending'
 
-import { getStreams } from '$mp/modules/streams/actions'
+import { getAllStreams } from '$mp/modules/streams/actions'
 
-export default function useLoadStreamsCallback() {
+export default function useLoadAllStreamsCallback() {
     const dispatch = useDispatch()
     const { wrap } = usePending('streams.LOAD')
 
     return useCallback(async (params: Object = {}) => (
         wrap(async () => {
-            await dispatch(getStreams(params))
+            await dispatch(getAllStreams(params))
         })
     ), [wrap, dispatch])
 }

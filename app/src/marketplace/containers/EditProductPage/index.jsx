@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useContext, useMemo, useEffect, useCallback, useState, useRef } from 'react'
+import React, { useContext, useMemo, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -21,7 +21,7 @@ import useProduct from '$mp/containers/ProductController/useProduct'
 import useEthereumIdentities from '$shared/modules/integrationKey/hooks/useEthereumIdentities'
 import useDataUnionSecrets from '$mp/modules/dataUnion/hooks/useDataUnionSecrets'
 import ResourceNotFoundError, { ResourceType } from '$shared/errors/ResourceNotFoundError'
-import { selectFetchingStreams, selectHasMoreResults } from '$mp/modules/streams/selectors'
+import { selectFetchingStreams } from '$mp/modules/streams/selectors'
 import useWhitelist from '$mp/modules/contractProduct/hooks/useWhitelist'
 import useModal from '$shared/hooks/useModal'
 
@@ -39,8 +39,6 @@ import CropImageModal from './CropImageModal'
 import WhitelistEditModal from './WhitelistEditModal'
 
 import styles from './editProductPage.pcss'
-
-const STREAMS_PAGE_SIZE = 999
 
 const EditProductPage = ({ product }: { product: Product }) => {
     const {
@@ -60,55 +58,33 @@ const EditProductPage = ({ product }: { product: Product }) => {
         loadDataUnion,
         loadDataUnionStats,
         clearStreams,
-        loadStreams,
+        loadAllStreams,
         resetDataUnion,
     } = useController()
 
     const { load: loadDataUnionSecrets, reset: resetDataUnionSecrets } = useDataUnionSecrets()
     const { load: loadWhiteWhitelistedAdresses, reset: resetWhiteWhitelistedAdresses } = useWhitelist()
     const fetchingAllStreams = useSelector(selectFetchingStreams)
-    const hasMoreResults = useSelector(selectHasMoreResults)
-    const [nextPage, setNextPage] = useState(0)
-    const loadedPageRef = useRef(0)
     const { isOpen: isDataUnionDeployDialogOpen } = useModal('dataUnion.DEPLOY')
     const { isOpen: isConfirmSaveDialogOpen } = useModal('confirmSave')
     const { isOpen: isPublishDialogOpen } = useModal('publish')
 
-    const doLoadStreams = useCallback((page = 0) => {
-        loadedPageRef.current = page
-        loadStreams({
-            max: STREAMS_PAGE_SIZE,
-            offset: page * STREAMS_PAGE_SIZE,
-        }).then(() => {
-            setNextPage(page + 1)
-        })
-    }, [loadStreams])
-
     const productId = product.id
     // Load categories and streams
     useEffect(() => {
-        clearStreams()
         loadContractProductSubscription(productId)
         loadCategories()
         loadProductStreams(productId)
         loadWhiteWhitelistedAdresses(productId)
-        doLoadStreams()
+        loadAllStreams()
     }, [
         loadCategories,
         loadContractProductSubscription,
         loadProductStreams,
         productId,
-        clearStreams,
-        doLoadStreams,
+        loadAllStreams,
         loadWhiteWhitelistedAdresses,
     ])
-
-    // Load more streams if we didn't get all in the initial load
-    useEffect(() => {
-        if (!fetchingAllStreams && hasMoreResults && nextPage > loadedPageRef.current) {
-            doLoadStreams(nextPage)
-        }
-    }, [nextPage, fetchingAllStreams, hasMoreResults, doLoadStreams])
 
     // Load eth identities & data union (used to determine if owner account is linked)
     const { load: loadEthIdentities } = useEthereumIdentities()
@@ -143,11 +119,12 @@ const EditProductPage = ({ product }: { product: Product }) => {
         loadDataUnionSecrets,
     ])
 
-    // clear data union secrets when unmounting
+    // clear streams & data union secrets when unmounting
     useEffect(() => () => {
         resetDataUnion()
         resetDataUnionSecrets()
-    }, [resetDataUnion, resetDataUnionSecrets])
+        clearStreams()
+    }, [resetDataUnion, resetDataUnionSecrets, clearStreams])
 
     // clear whitelisted addresses when unmounting
     useEffect(() => () => {
