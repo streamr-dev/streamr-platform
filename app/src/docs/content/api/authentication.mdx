@@ -6,11 +6,11 @@ A session token is required to make requests to the REST API endpoints or over t
 
 ### Authenticating options
 
-The easiest way to authenticate is through the <a href="https://github.com/streamr-dev/streamr-client-javascript/" target="_blank" rel="noopener noreferrer">Streamr Client</a> - it will handle the cryptographic signing for you. Client authentication instructions can be found in the <a href="https://github.com/streamr-dev/streamr-client-javascript/" target="_blank" rel="noopener noreferrer">repo readme</a>.
+The easiest way to authenticate is through the <a href="https://github.com/streamr-dev/network-monorepo/tree/main/packages/client" target="_blank" rel="noopener noreferrer">Streamr Client</a> - it will handle the cryptographic signing for you. Client authentication instructions can be found in the <a href="https://github.com/streamr-dev/network-monorepo/blob/main/packages/client/README.md" target="_blank" rel="noopener noreferrer">repo readme</a>.
 
 If you prefer to use the REST API directly the you can use an Ethereum private key to authenticate by signing a challenge with it and providing your Ethereum public address for verification.
 
-Use the `POST` endpoint at `/api/v1/login/challenge/YOUR-PUBLIC-ADDRESS` to generate a random text called a challenge, which looks like the following: 
+Use the `POST` endpoint at `/api/v1/login/challenge/YOUR-PUBLIC-ADDRESS` to generate a random text called a challenge, which looks like the following:
 
 ```
 {
@@ -43,7 +43,7 @@ If the signature is correct, you will receive a [session token](#session-token).
 
 ### Using the session token
 
-By using one of the above authentication methods, you will obtain a session token response in the following format: 
+By using one of the above authentication methods, you will obtain a session token response in the following format:
 
 ```
 {

@@ -1,15 +1,16 @@
-import { Link } from 'react-router-dom'
-import docsLinks from '$shared/../docsLinks'
+import { Link } from "react-router-dom";
+import docsLinks from "$shared/../docsLinks";
 
 # API overview
 
 Streamr provides a set of APIs for easy integration with other systems. The APIs cover <Link to={docsLinks.authentication}>Authentication</Link>, data input, data output, and managing various resources within Streamr (such as Data Unions, streams and products).
 
 There are <a href="https://en.wikipedia.org/wiki/Representational_state_transfer" target="_blank" rel="noopener noreferrer">REST</a>ful HTTP endpoints that can be accessed using any HTTP library with ease. You can explore these endpoints using the <Link to={docsLinks.apiExplorer}>API Explorer</Link>. You can expect:
-- Predictable resource-oriented URL endpoints
-- Form-encoded request bodies
-- JSON-encoded responses
-- Standard HTTP response codes, authentication, and verbs.
+
+-   Predictable resource-oriented URL endpoints
+-   Form-encoded request bodies
+-   JSON-encoded responses
+-   Standard HTTP response codes, authentication, and verbs.
 
 There are two APIs for requesting data from Streamr into external applications: the websocket-based streaming API, and the HTTP API. For efficiently publishing and subscribing to data in real-time, using the websocket API is recommended.
 
@@ -17,10 +18,28 @@ The streaming API can be used to control external applications using real-time e
 
 Using a client library is recommended for most tasks and integrations:
 
-- <a href="https://github.com/streamr-dev/streamr-client-javascript" target="_blank" rel="noopener noreferrer">JavaScript client library (official)</a> 
-- client works in the browser as well as node.js. The package is available on <a href="https://www.npmjs.com/package/streamr-client" target="_blank" rel="noopener noreferrer">npm</a>.
-- <a href="https://github.com/streamr-dev/streamr-client-java" target="_blank" rel="noopener noreferrer">Java client library (official)</a>
-- <a href="https://github.com/streamr-dev/streamr-client-python" target="_blank" rel="noopener noreferrer">Python client library (community)</a>
+-   <a
+        href="https://github.com/streamr-dev/network-monorepo/tree/main/packages/client"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        JavaScript client library (official)
+    </a>{" "}
+-   client works in the browser as well as node.js. The package is available on <a href="https://www.npmjs.com/package/streamr-client" target="_blank" rel="noopener noreferrer">npm</a>.
+-   <a
+        href="https://github.com/streamr-dev/streamr-client-java"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        Java client library (official)
+    </a>
+-   <a
+        href="https://github.com/streamr-dev/streamr-client-python"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        Python client library (community)
+    </a>
 
 If you'd like to contribute a client library and get it listed here, check out our section on <Link to={docsLinks.technicalNotes}>contributing</Link>.
 
@@ -30,14 +49,14 @@ The body of the request should be a JSON object, encoded in UTF-8, containing th
 
 **Response codes**
 
-Code | Description
----- | -----------
-200  | Success (the response is empty)
-400  | Invalid request
-401  | Permission denied
-403  | Authentication failed
-404  | Stream not found
-500  | Unexpected error
+| Code | Description                     |
+| ---- | ------------------------------- |
+| 200  | Success (the response is empty) |
+| 400  | Invalid request                 |
+| 401  | Permission denied               |
+| 403  | Authentication failed           |
+| 404  | Stream not found                |
+| 500  | Unexpected error                |
 
 ### Data output over websocket
 

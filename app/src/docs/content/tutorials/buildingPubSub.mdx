@@ -1,53 +1,65 @@
+import cx from "classnames";
+import { Link } from "react-router-dom";
 
-import cx from 'classnames'
-import { Link } from 'react-router-dom'
+import Image from "$docs/components/Image";
+import Warning from "$docs/components/Warning";
+import { CodeSnippet } from "@streamr/streamr-layout";
+import docsLinks from "$shared/../docsLinks";
 
-import Image from '$docs/components/Image'
-import Warning from '$docs/components/Warning'
-import { CodeSnippet } from '@streamr/streamr-layout'
-import docsLinks from '$shared/../docsLinks'
+import StreamEditorPreview from "./images/tutorials_pub_sub_01_desktop.jpg";
+import StreamEditorPreview2x from "./images/tutorials_pub_sub_01_desktop@2x.jpg";
+import Postman from "./images/tutorials_pub_sub_02_desktop.jpg";
+import Postman2x from "./images/tutorials_pub_sub_02_desktop@2x.jpg";
 
-import StreamEditorPreview from './images/tutorials_pub_sub_01_desktop.jpg'
-import StreamEditorPreview2x from './images/tutorials_pub_sub_01_desktop@2x.jpg'
-import Postman from './images/tutorials_pub_sub_02_desktop.jpg'
-import Postman2x from './images/tutorials_pub_sub_02_desktop@2x.jpg'
+import { ClientSub, ClientPub, InputsAndOutputs } from "./code/tutorials.js";
 
-import { ClientSub, ClientPub, InputsAndOutputs } from './code/tutorials.js'
-
-import docsStyles from '$docs/components/DocsLayout/docsLayout.pcss'
-import tutorialStyles from '$docs/components/Pages/Tutorials/tutorials.pcss'
+import docsStyles from "$docs/components/DocsLayout/docsLayout.pcss";
+import tutorialStyles from "$docs/components/Pages/Tutorials/tutorials.pcss";
 
 # Building a simple pub/sub system
+
 Before proceeding with this tutorial, we assume you have connected your Ethereum account and that you have also <Link to={docsLinks.streams}>created your first stream</Link>.
 
 ### Publish to a stream
-The easiest way to push data to a stream is to use one of our <Link to={docsLinks.sdk}>SDKs</Link>, currently available in <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/streamr-client-javascript">Javascript</a>, <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/streamr-client-java">Java</a>. Client libraries for other languages are on the roadmap. Here is an example of publishing data to a stream using Streamr Javascript client.
 
-<CodeSnippet language="javascript" wrapLines showLineNumbers >{ClientPub}</CodeSnippet>
+The easiest way to push data to a stream is to use one of our <Link to={docsLinks.sdk}>SDKs</Link>, currently available in <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/network-monorepo/tree/main/packages/client">Javascript</a>, <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/streamr-client-java">Java</a>. Client libraries for other languages are on the roadmap. Here is an example of publishing data to a stream using Streamr Javascript client.
+
+<CodeSnippet language="javascript" wrapLines showLineNumbers>
+    {ClientPub}
+</CodeSnippet>
 
 Inside the Core app, you can select the stream and monitor the data preview - your published messages will appear here in real-time.
 
 <Image
-  src={StreamEditorPreview}
-  highResSrc={StreamEditorPreview2x}
-  alt="Stream Editor Preview"
+    src={StreamEditorPreview}
+    highResSrc={StreamEditorPreview2x}
+    alt="Stream Editor Preview"
 />
 
 Additionally, you can interact with the Streamr API using any HTTP library of your choice. You will find all the details in the <Link to={docsLinks.api}>API section</Link>. You will need to <Link to={docsLinks.authentication}>authenticate</Link> first before publishing data to any stream.
 
-Once autenticated, you’ll be making a `HTTP POST` request to a URL, which contains your stream ID. Please note that characters in the stream ID should be escaped using url encoding such as changing slashes to `%2F`. The body of the request will be your data payload in JSON. 
+Once autenticated, you’ll be making a `HTTP POST` request to a URL, which contains your stream ID. Please note that characters in the stream ID should be escaped using url encoding such as changing slashes to `%2F`. The body of the request will be your data payload in JSON.
 
-<CodeSnippet language="text" wrapLines>{`https://streamr.network/api/v1/streams/MY-STREAM-ID/data`}</CodeSnippet>
+<CodeSnippet
+    language="text"
+    wrapLines
+>{`https://streamr.network/api/v1/streams/MY-STREAM-ID/data`}</CodeSnippet>
 
 You will need to get a session token to publish to a stream - all the different authorization options are explained in the: <Link to={docsLinks.authentication}>API docs</Link>.
 
-<CodeSnippet language="text" wrapLines>{`Authorization: Bearer my-session-token`}</CodeSnippet>
+<CodeSnippet
+    language="text"
+    wrapLines
+>{`Authorization: Bearer my-session-token`}</CodeSnippet>
 
 ### Subscribe to data
-Along with publishing data to a stream, subscribing is best done with one of our <Link to={docsLinks.sdk}>SDKs</Link>. Depending on how you've configured the stream share permissions inside the core app, the subscriber may not need to authenticate. 
 
-Here is the example from the Streamr JavaScript client <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/streamr-client-javascript">readme</a> on how to subscribe to a stream.
+Along with publishing data to a stream, subscribing is best done with one of our <Link to={docsLinks.sdk}>SDKs</Link>. Depending on how you've configured the stream share permissions inside the core app, the subscriber may not need to authenticate.
 
-<CodeSnippet language="javascript" wrapLines showLineNumbers >{ClientSub}</CodeSnippet>
+Here is the example from the Streamr JavaScript client <a target="_blank" rel="noopener noreferrer" href="https://github.com/streamr-dev/network-monorepo/blob/main/packages/client/README.md">readme</a> on how to subscribe to a stream.
+
+<CodeSnippet language="javascript" wrapLines showLineNumbers>
+    {ClientSub}
+</CodeSnippet>
 
 Congratulations, you've now created a stream, published and subscribed to it 🎉

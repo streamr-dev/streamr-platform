@@ -92,7 +92,7 @@
         "spark": "https://medium.com/streamrblog/integrating-streamr-with-apache-spark-4c049f2688a1"
     },
     "misc": {
-        "cliTool": "https://github.com/streamr-dev/cli-tools",
+        "cliTool": "https://github.com/streamr-dev/network-monorepo/tree/main/packages/cli-tools",
         "decentralizedWeb": "https://blockchainhub.net/web3-decentralized-web/"
     },
     "api": {
